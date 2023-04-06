@@ -6,9 +6,8 @@ export default function HomePage () {
   const navigate = useNavigate();
   return (
     <>
-      <h1>HomePage!</h1>
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '5px' }}>
-        <HomePageButton onClick={() => { navigate('/register') }}>Admin (Manage/Create Games)</HomePageButton>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '5px', minHeight: '100vh' }}>
+        <HomePageButton onClick={() => { navigate('/login') }}>Admin (Manage/Create Games)</HomePageButton>
         <br />
         <HomePageButton>Player (Join/Play Games)</HomePageButton>
       </div>
