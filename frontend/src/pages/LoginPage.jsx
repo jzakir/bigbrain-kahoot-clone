@@ -2,6 +2,7 @@ import React from 'react';
 import axios from '../axios';
 import { Button, Container, Typography, Box, Grid, TextField } from '@mui/material';
 import { useNavigate, Link } from 'react-router-dom';
+import { useContext, Context } from '../authContext';
 
 // axios.defaults.baseURL = 'http://localhost:5005';
 // axios.defaults.headers.put['Content-Type'] = 'application/json';
@@ -24,6 +25,8 @@ export default function LoginPage () {
     password: ''
   })
 
+  const { authToken, setAuthToken } = useContext(Context);
+  console.log(authToken);
   console.log(fieldValues);
 
   const handleChangeEmail = (e) => {
@@ -44,9 +47,13 @@ export default function LoginPage () {
       password: fieldValues.password
     })
       .then((response) => {
-        console.log(response.data);
+        console.log(response.data.token);
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        console.log('hey');
+        console.log(err)
+      });
+    setAuthToken('tokengoeshere');
   }
 
   const navigate = useNavigate();

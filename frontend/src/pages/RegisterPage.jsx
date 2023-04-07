@@ -20,9 +20,9 @@ export default function RegisterPage () {
 
     axios
       .post('/admin/auth/register', {
-        email: email,
-        password: password,
-        name: name
+        email,
+        password,
+        name
       })
       .then(data => {
         console.log(data);

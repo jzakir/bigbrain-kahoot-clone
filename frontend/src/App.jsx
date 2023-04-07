@@ -5,6 +5,7 @@ import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
 import NavBar from './components/NavBar';
 import DashBoard from './pages/Dashboard';
+import { Context } from './authContext';
 
 document.title = 'BigBrain!';
 
@@ -17,6 +18,7 @@ function App () {
   console.log(setAuthToken);
   return (
     <>
+    <Context.Provider value={{ authToken, setAuthToken, }}>
       <BrowserRouter>
         <NavBar/>
         <Routes>
@@ -26,6 +28,7 @@ function App () {
           <Route exact path="dashboard" element={<DashBoard/>}/>
         </Routes>
       </BrowserRouter>
+    </Context.Provider>
     </>
   );
 }
