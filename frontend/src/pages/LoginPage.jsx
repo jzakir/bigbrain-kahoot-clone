@@ -2,6 +2,7 @@ import React from 'react';
 import axios from '../axios';
 import { Button, Container, Typography, Box, Grid, TextField } from '@mui/material';
 import { useNavigate, Link } from 'react-router-dom';
+import { useContext, Context } from '../authContext';
 
 const boxStyle = {
   backgroundColor: '#FFFFFF',
@@ -19,8 +20,7 @@ export default function LoginPage () {
     email: '',
     password: ''
   })
-
-  console.log(fieldValues);
+  const { setAuthToken } = useContext(Context);
 
   const handleChangeEmail = (e) => {
     const newValues = { ...fieldValues };
@@ -43,13 +43,15 @@ export default function LoginPage () {
       password: fieldValues.password
     })
       .then((response) => {
-        console.log(response.data);
+        console.log(response.data.token);
+        setAuthToken(response.data.token);
       })
       .catch((err) => {
         console.log(err)
       })
       .finally(() => {
         setLoading(false);
+        navigate('/dashboard');
       })
   }
 
@@ -64,7 +66,7 @@ export default function LoginPage () {
                     </Typography>
                     {loading
                       ? (
-                        <div>
+                        <div style={ { marginTop: '60px' } }>
                           <Typography variant='h6'>Loading...</Typography>
                         </div>
                         )
