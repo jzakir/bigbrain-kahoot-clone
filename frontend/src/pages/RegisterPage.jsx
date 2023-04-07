@@ -1,0 +1,16 @@
+import React from 'react';
+import { Button } from '@mui/material';
+import { useNavigate, Link } from 'react-router-dom';
+
+export default function RegisterPage () {
+  const navigate = useNavigate();
+  return (
+        <>
+            <h1>Register Page</h1>
+            <Link to="/login">Sign In</Link>
+            <br />
+            <br />
+            <Button variant="contained" onClick={() => { navigate('/') }}>Back to Home</Button>
+        </>
+  );
+}
