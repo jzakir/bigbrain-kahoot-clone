@@ -50,6 +50,7 @@ export default function LoginPage () {
   }
 
   const navigate = useNavigate();
+
   return (
         <>
             <Container component="main" maxWidth="sm" style={ { marginTop: '100px' } }>
