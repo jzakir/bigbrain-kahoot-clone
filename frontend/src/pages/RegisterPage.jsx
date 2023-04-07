@@ -98,9 +98,12 @@ export default function RegisterPage () {
               </Grid>
               <Button
                 type='submit'
-                variant="contained"
+                variant="outlined"
                 fullWidth
-                sx={{ mt: 3, mb: 2 }}
+                sx={ {
+                  mt: 3,
+                  mb: 2,
+                } }
               >
               Register
               </Button>

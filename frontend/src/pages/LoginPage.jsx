@@ -81,15 +81,17 @@ export default function LoginPage () {
               id="password"
               onChange={handleChangePassword}
               />
-              <Button fullWidth variant="contained" color="primary" onClick={handleLogin}>
+              <Button sx={ { backgroundColor: '#2E3137' } } fullWidth variant="contained" color="primary" onClick={handleLogin}>
                   Sign In
               </Button>
               <Grid container direction="column" alignItems="center">
                   <Grid item>
                       <br />
-                      <Link to="/register">
-                          <Typography variant='h6'>{"Don't Have an account? Register."}</Typography>
-                      </Link>
+                      <Typography variant='h6'>Don&apos;t Have an account?
+                        <Link to="/register">
+                          Register
+                        </Link>
+                      </Typography>
                   </Grid>
               </Grid>
           </form>
