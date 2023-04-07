@@ -68,7 +68,7 @@ export default function LoginPage () {
                     </Typography>
                     {loading
                       ? (
-                        <div>
+                        <div style={ { marginTop: '60px' } }>
                           <Typography variant='h6'>Loading...</Typography>
                         </div>
                         )
