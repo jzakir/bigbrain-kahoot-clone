@@ -1,11 +1,13 @@
 import React from 'react';
-import { Button } from '@mui/material';
-import TextField from '@mui/material/TextField';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+import {
+  Button,
+  Grid,
+  Box,
+  Typography,
+  TextField
+} from '@mui/material';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import axios from '../axios';
 
 export default function RegisterPage () {
   const navigate = useNavigate();
