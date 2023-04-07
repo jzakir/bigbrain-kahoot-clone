@@ -1,6 +1,12 @@
 import React from 'react';
+import axios from '../axios';
 import { Button, Container, Typography, Box, Grid, TextField } from '@mui/material';
 import { useNavigate, Link } from 'react-router-dom';
+
+// axios.defaults.baseURL = 'http://localhost:5005';
+// axios.defaults.headers.put['Content-Type'] = 'application/json';
+// axios.defaults.headers.post['Content-Type'] = 'application/json';
+// axios.defaults.headers.delete['Content-Type'] = 'application/json';
 
 const boxStyle = {
   backgroundColor: '#FFFFFF',
@@ -13,6 +19,36 @@ const boxStyle = {
 };
 
 export default function LoginPage () {
+  const [fieldValues, setFieldValues] = React.useState({
+    email: '',
+    password: ''
+  })
+
+  console.log(fieldValues);
+
+  const handleChangeEmail = (e) => {
+    const newValues = { ...fieldValues };
+    newValues.email = e.target.value;
+    setFieldValues(newValues);
+  }
+
+  const handleChangePassword = (e) => {
+    const newValues = { ...fieldValues };
+    newValues.password = e.target.value;
+    setFieldValues(newValues);
+  }
+
+  const handleLogin = (e) => {
+    axios.post('/admin/auth/login', {
+      email: fieldValues.email,
+      password: fieldValues.password
+    })
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch(err => console.log(err));
+  }
+
   const navigate = useNavigate();
   return (
         <>
@@ -32,6 +68,7 @@ export default function LoginPage () {
                         name="email"
                         type="text"
                         autoFocus
+                        onChange={handleChangeEmail}
                         />
                         <TextField
                         variant="outlined"
@@ -42,8 +79,9 @@ export default function LoginPage () {
                         label="Password"
                         type="password"
                         id="password"
+                        onChange={handleChangePassword}
                         />
-                        <Button type="submit" fullWidth variant="contained" color="primary">
+                        <Button fullWidth variant="contained" color="primary" onClick={handleLogin}>
                             Sign In
                         </Button>
                         <Grid container direction="column" alignItems="center">
