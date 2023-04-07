@@ -49,8 +49,8 @@ export default function LoginPage () {
 
   return (
     <>
-      <Typography component="h1" variant="h6">
-        Admin Login
+      <Typography component="h1" variant="h4">
+        Login
       </Typography>
       {loading
         ? (
@@ -90,7 +90,7 @@ export default function LoginPage () {
                   <Grid item>
                       <br />
                       <Link to="/register">
-                          {"Don't have an account? Register"}
+                          <Typography variant='h6'>{"Don't Have an account? Register."}</Typography>
                       </Link>
                   </Grid>
               </Grid>

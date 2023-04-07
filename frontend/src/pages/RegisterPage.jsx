@@ -47,7 +47,6 @@ export default function RegisterPage () {
       <>
         <Box
           sx={{
-            mt: 8,
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
@@ -113,7 +112,6 @@ export default function RegisterPage () {
             Already have an account?
             <Link to="/login">Sign In</Link>
           </Typography>
-          <Button variant="contained" onClick={() => { navigate('/') }}>Back to Home</Button>
         </Box>
       </>
   );
