@@ -16,8 +16,8 @@ export default function LoginPage () {
   const navigate = useNavigate();
   return (
         <>
-            <Container component="main" maxWidth="sm" style={ { marginTop: '20px' } }>
-                <Box boxShadow={3} style={ boxStyle }>
+            <Container component="main" maxWidth="sm" style={ { marginTop: '100px' } }>
+                <Box boxShadow={4} style={ boxStyle }>
                     <Typography component="h1" variant="h6">
                         Admin Login
                     </Typography>
@@ -42,7 +42,6 @@ export default function LoginPage () {
                         label="Password"
                         type="password"
                         id="password"
-                        autoComplete="current-password"
                         />
                         <Button type="submit" fullWidth variant="contained" color="primary">
                             Sign In
@@ -50,7 +49,7 @@ export default function LoginPage () {
                         <Grid container direction="column" alignItems="center">
                             <Grid item>
                                 <br />
-                                <Link to="/register" variant="body1">
+                                <Link to="/register">
                                     {"Don't have an account? Register"}
                                 </Link>
                             </Grid>
