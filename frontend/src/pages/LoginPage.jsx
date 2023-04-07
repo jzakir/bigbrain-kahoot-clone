@@ -35,13 +35,11 @@ export default function LoginPage () {
       .then((response) => {
         console.log(response.data.token);
         setAuthToken(response.data.token);
+        navigate('/dashboard');
       })
       .catch((err) => {
-        console.log(err)
-      })
-      .finally(() => {
+        alert(err);
         setLoading(false);
-        navigate('/dashboard');
       })
   }
 
