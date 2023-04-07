@@ -14,7 +14,7 @@ function App () {
     localStorage.getItem('token')
   );
 
-  console.log(authToken);
+  console.log('Current token at app level: ' + authToken);
   console.log(setAuthToken);
   return (
     <>

@@ -8,6 +8,7 @@ import {
 } from '@mui/material';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from '../axios';
+import { useContext, Context } from '../authContext';
 
 export default function RegisterPage () {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ export default function RegisterPage () {
   const [name, setName] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const { setAuthToken } = useContext(Context);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -30,18 +32,16 @@ export default function RegisterPage () {
       })
       .then(response => {
         console.log(response.data.token);
+        setAuthToken(response.data.token);
       })
       .catch(err => {
         console.log(err);
       })
       .finally(() => {
         setLoading(false);
+        navigate('/dashboard');
       })
   }
-
-  console.log(name);
-  console.log(email);
-  console.log(password);
 
   return (
       <>

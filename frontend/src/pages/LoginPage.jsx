@@ -20,10 +20,7 @@ export default function LoginPage () {
     email: '',
     password: ''
   })
-
-  const { authToken, setAuthToken } = useContext(Context);
-  console.log(authToken);
-  console.log(fieldValues);
+  const { setAuthToken } = useContext(Context);
 
   const handleChangeEmail = (e) => {
     const newValues = { ...fieldValues };
@@ -54,6 +51,7 @@ export default function LoginPage () {
       })
       .finally(() => {
         setLoading(false);
+        navigate('/dashboard');
       })
   }
 
