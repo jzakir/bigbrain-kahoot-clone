@@ -52,6 +52,9 @@ export default function RegisterPage () {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
+            backgroundColor: '#F7F7F2',
+            padding: '40px',
+            borderRadius: '15px'
           }}
         >
           <Typography variant="h4" sx={{ mb: 2 }}>Register</Typography>
@@ -102,21 +105,19 @@ export default function RegisterPage () {
               </Grid>
               <Button
                 type='submit'
-                variant="outlined"
+                variant="contained"
                 fullWidth
-                sx={ {
-                  mt: 3,
-                  mb: 2,
-                } }
+                sx={ { backgroundColor: '#2E3137', mt: 3, mb: 3 } }
               >
               Register
               </Button>
+              <Typography>
+                Already have an account?&nbsp;
+                <Link to="/login">Sign In</Link>
+              </Typography>
             </Box>
               )}
-          <Typography variant="h6">
-            Already have an account?
-            <Link to="/login">Sign In</Link>
-          </Typography>
+
         </Box>
       </>
   );

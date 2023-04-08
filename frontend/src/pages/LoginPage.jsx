@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from '../axios';
-import { Button, Typography, Grid, TextField } from '@mui/material';
+import { Button, Typography, Grid, Box, TextField } from '@mui/material';
 import { useNavigate, Link } from 'react-router-dom';
 import { useContext, Context } from '../authContext';
 
@@ -46,56 +46,72 @@ export default function LoginPage () {
 
   return (
     <>
-      <Typography component="h1" variant="h4">
-        Login
-      </Typography>
-      {loading
-        ? (
-          <div style={ { marginTop: '60px' } }>
-            <Typography variant='h6'>Loading...</Typography>
-          </div>
-          )
-        : (
-          <form noValidate>
-              <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email"
-              name="email"
-              type="text"
-              autoFocus
-              onChange={handleChangeEmail}
-              />
-              <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              onChange={handleChangePassword}
-              />
-              <Button sx={ { backgroundColor: '#2E3137' } } fullWidth variant="contained" color="primary" onClick={handleLogin}>
-                  Sign In
-              </Button>
-              <Grid container direction="column" alignItems="center">
-                  <Grid item>
-                      <br />
-                      <Typography variant='h6'>Don&apos;t Have an account?
-                        <Link to="/register">
-                          Register
-                        </Link>
-                      </Typography>
-                  </Grid>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          backgroundColor: '#F7F7F2',
+          padding: '40px',
+          borderRadius: '10px'
+        }}
+      >
+        <Typography component="h1" variant="h4">
+          Sign In
+        </Typography>
+        {loading
+          ? (
+            <div style={ { marginTop: '60px' } }>
+              <Typography variant='h6'>Loading...</Typography>
+            </div>
+            )
+          : (
+            <Box component='form' noValidate>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="email"
+                    label="Email"
+                    name="email"
+                    type="text"
+                    autoFocus
+                    onChange={handleChangeEmail}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    variant="outlined"
+                    margin="normal"
+                    required
+                    fullWidth
+                    name="password"
+                    label="Password"
+                    type="password"
+                    id="password"
+                    onChange={handleChangePassword}
+                  />
+                </Grid>
               </Grid>
-          </form>
-          )
-      }
+              <Button
+                fullWidth
+                variant="contained"
+                onClick={handleLogin}
+                sx={ { backgroundColor: '#2E3137', mt: 2, mb: 3 } }
+              >
+                Sign In
+              </Button>
+              <Typography>
+                Don&apos;t have an account?&nbsp;
+                <Link to="/register">Register</Link>
+              </Typography>
+            </Box>
+            )
+        }
+      </Box>
     </>
   );
 }
