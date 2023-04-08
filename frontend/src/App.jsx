@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage';
 import DashBoard from './pages/Dashboard';
 import { Context } from './authContext';
 import LoginRegisterLayout from './layouts/LoginRegisterLayout';
+import PrivateRoute from './layouts/PrivateRoute';
 
 document.title = 'BigBrain!';
 
@@ -16,18 +17,24 @@ function App () {
   );
 
   console.log('Current token at app level: ' + authToken);
-  console.log(setAuthToken);
   return (
     <>
     <Context.Provider value={{ authToken, setAuthToken }}>
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<HomePage/>}/>
           <Route element={<LoginRegisterLayout/>}>
             <Route exact path="register" element={<RegisterPage/>}/>
             <Route exact path="login" element={<LoginPage/>}/>
           </Route>
-          <Route path="/" element={<HomePage/>}/>
-          <Route exact path="dashboard" element={<DashBoard/>}/>
+          <Route
+            exact
+            path="dashboard"
+            element={
+              <PrivateRoute>
+                <DashBoard/>
+              </PrivateRoute>}
+          />
         </Routes>
       </BrowserRouter>
     </Context.Provider>

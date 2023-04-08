@@ -26,15 +26,14 @@ export default function LoginPage () {
 
   const handleLogin = (e) => {
     setLoading(true);
-    console.log(loading);
 
     axios.post('/admin/auth/login', {
       email: fieldValues.email,
       password: fieldValues.password
     })
       .then((response) => {
-        console.log(response.data.token);
         setAuthToken(response.data.token);
+        localStorage.setItem('token', response.data.token);
         navigate('/dashboard');
       })
       .catch((err) => {

@@ -24,6 +24,10 @@ export default function RegisterPage () {
     event.preventDefault();
     setLoading(true);
 
+    if (email === '' || password === '' || name === '') {
+      return;
+    }
+
     axios
       .post('/admin/auth/register', {
         email,
@@ -31,8 +35,8 @@ export default function RegisterPage () {
         name
       })
       .then(response => {
-        console.log(response.data.token);
         setAuthToken(response.data.token);
+        localStorage.setItem('token', response.data.token);
         navigate('/dashboard');
       })
       .catch(err => {
