@@ -1,11 +1,12 @@
 import React from 'react';
 import {
-  Button,
   Grid,
   Box,
   Typography,
   TextField
 } from '@mui/material';
+import PrimaryButton from '../components/PrimaryButton';
+import WhiteBox from '../components/WhiteBox';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from '../axios';
 import { useContext, Context } from '../authContext';
@@ -22,12 +23,13 @@ export default function RegisterPage () {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setLoading(true);
 
     if (email === '' || password === '' || name === '') {
+      // Create an error pop up here
       return;
     }
 
+    setLoading(true);
     axios
       .post('/admin/auth/register', {
         email,
@@ -47,16 +49,7 @@ export default function RegisterPage () {
 
   return (
       <>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            backgroundColor: '#F7F7F2',
-            padding: '40px',
-            borderRadius: '15px'
-          }}
-        >
+        <WhiteBox>
           <Typography variant="h4" sx={{ mb: 2 }}>Register</Typography>
           {loading
             ? (
@@ -103,22 +96,20 @@ export default function RegisterPage () {
                   />
                 </Grid>
               </Grid>
-              <Button
+              <PrimaryButton
                 type='submit'
-                variant="contained"
                 fullWidth
-                sx={ { backgroundColor: '#2E3137', mt: 3, mb: 3 } }
+                sx={ { mt: 3, mb: 3 } }
               >
               Register
-              </Button>
+              </PrimaryButton>
               <Typography>
                 Already have an account?&nbsp;
-                <Link to="/login">Sign In</Link>
+                <Link to="/login" style={{ textDecoration: 'none' }}>Sign In</Link>
               </Typography>
             </Box>
               )}
-
-        </Box>
+        </WhiteBox>
       </>
   );
 }

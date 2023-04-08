@@ -22,8 +22,8 @@ function App () {
     <Context.Provider value={{ authToken, setAuthToken }}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<HomePage/>}/>
           <Route element={<LoginRegisterLayout/>}>
+            <Route path="/" element={<HomePage/>}/>
             <Route exact path="register" element={<RegisterPage/>}/>
             <Route exact path="login" element={<LoginPage/>}/>
           </Route>

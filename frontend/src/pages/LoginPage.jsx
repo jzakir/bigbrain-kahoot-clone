@@ -1,8 +1,10 @@
 import React from 'react';
 import axios from '../axios';
-import { Button, Typography, Grid, Box, TextField } from '@mui/material';
+import { Typography, Grid, Box, TextField } from '@mui/material';
 import { useNavigate, Link } from 'react-router-dom';
 import { useContext, Context } from '../authContext';
+import PrimaryButton from '../components/PrimaryButton';
+import WhiteBox from '../components/WhiteBox';
 
 export default function LoginPage () {
   const [loading, setLoading] = React.useState(false);
@@ -25,8 +27,12 @@ export default function LoginPage () {
   }
 
   const handleLogin = (e) => {
-    setLoading(true);
+    if (!fieldValues.email || !fieldValues.password) {
+      // Create an error pop up here
+      return;
+    }
 
+    setLoading(true);
     axios.post('/admin/auth/login', {
       email: fieldValues.email,
       password: fieldValues.password
@@ -46,19 +52,8 @@ export default function LoginPage () {
 
   return (
     <>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          backgroundColor: '#F7F7F2',
-          padding: '40px',
-          borderRadius: '10px'
-        }}
-      >
-        <Typography component="h1" variant="h4">
-          Sign In
-        </Typography>
+      <WhiteBox>
+        <Typography variant="h4" sx={{ mb: 2 }}>Sign In</Typography>
         {loading
           ? (
             <div style={ { marginTop: '60px' } }>
@@ -96,22 +91,21 @@ export default function LoginPage () {
                   />
                 </Grid>
               </Grid>
-              <Button
+              <PrimaryButton
                 fullWidth
-                variant="contained"
                 onClick={handleLogin}
-                sx={ { backgroundColor: '#2E3137', mt: 2, mb: 3 } }
+                sx={ { mt: 2, mb: 3 } }
               >
                 Sign In
-              </Button>
+              </PrimaryButton>
               <Typography>
                 Don&apos;t have an account?&nbsp;
-                <Link to="/register">Register</Link>
+                <Link to="/register" style={{ textDecoration: 'none' }}>Register</Link>
               </Typography>
             </Box>
             )
         }
-      </Box>
+      </WhiteBox>
     </>
   );
 }

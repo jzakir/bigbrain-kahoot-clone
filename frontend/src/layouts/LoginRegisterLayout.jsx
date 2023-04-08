@@ -1,13 +1,13 @@
 import React from 'react';
-import { Button, Container, Box } from '@mui/material';
+import { Container, Box } from '@mui/material';
 import { useNavigate, Outlet } from 'react-router-dom';
+import PrimaryButton from '../components/PrimaryButton';
 
 const boxStyle = {
   padding: '30px',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  borderRadius: '2px'
 };
 
 export default function LoginRegisterLayout () {
@@ -22,12 +22,18 @@ export default function LoginRegisterLayout () {
         display: 'flex',
         alignItems: 'center'
       } }>
-        <Container component="main" maxWidth="sm" style={ { marginTop: '0px' } }>
+        <Container component="main" maxWidth="sm">
           <Box style={ boxStyle }>
               {/* Outlet is where login/register form will be rendered */}
               <Outlet/>
+            <PrimaryButton
+              variant="contained"
+              onClick={() => { navigate('/') }}
+              sx = { { alignSelf: 'flex-start', mt: 3 } }
+            >
+              Back to Home
+            </PrimaryButton>
           </Box>
-          <Button variant="contained" onClick={() => { navigate('/') }}>Back to Home</Button>
         </Container>
       </Container>
     </>
