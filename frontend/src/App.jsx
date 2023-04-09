@@ -3,9 +3,11 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
-import NavBar from './components/NavBar';
+// import NavBar from './components/NavBar';
 import DashBoard from './pages/Dashboard';
 import { Context } from './authContext';
+import LoginRegisterLayout from './layouts/LoginRegisterLayout';
+import PrivateRoute from './layouts/PrivateRoute';
 
 document.title = 'BigBrain!';
 
@@ -15,17 +17,24 @@ function App () {
   );
 
   console.log('Current token at app level: ' + authToken);
-  console.log(setAuthToken);
   return (
     <>
-    <Context.Provider value={{ authToken, setAuthToken, }}>
+    <Context.Provider value={{ authToken, setAuthToken }}>
       <BrowserRouter>
-        <NavBar/>
         <Routes>
-          <Route path="/" element={<HomePage/>}/>
-          <Route exact path="register" element={<RegisterPage/>}/>
-          <Route exact path="login" element={<LoginPage/>}/>
-          <Route exact path="dashboard" element={<DashBoard/>}/>
+          <Route element={<LoginRegisterLayout/>}>
+            <Route path="/" element={<HomePage/>}/>
+            <Route exact path="register" element={<RegisterPage/>}/>
+            <Route exact path="login" element={<LoginPage/>}/>
+          </Route>
+          <Route
+            exact
+            path="dashboard"
+            element={
+              <PrivateRoute>
+                <DashBoard/>
+              </PrivateRoute>}
+          />
         </Routes>
       </BrowserRouter>
     </Context.Provider>

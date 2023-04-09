@@ -1,14 +1,16 @@
 import React from 'react';
 import {
-  Button,
   Grid,
   Box,
   Typography,
   TextField
 } from '@mui/material';
+import PrimaryButton from '../components/PrimaryButton';
+import WhiteBox from '../components/WhiteBox';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from '../axios';
 import { useContext, Context } from '../authContext';
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 
 export default function RegisterPage () {
   const navigate = useNavigate();
@@ -22,8 +24,13 @@ export default function RegisterPage () {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setLoading(true);
 
+    if (email === '' || password === '' || name === '') {
+      // Create an error pop up here
+      return;
+    }
+
+    setLoading(true);
     axios
       .post('/admin/auth/register', {
         email,
@@ -31,28 +38,19 @@ export default function RegisterPage () {
         name
       })
       .then(response => {
-        console.log(response.data.token);
         setAuthToken(response.data.token);
+        localStorage.setItem('token', response.data.token);
+        navigate('/dashboard');
       })
       .catch(err => {
         console.log(err);
-      })
-      .finally(() => {
         setLoading(false);
-        navigate('/dashboard');
       })
   }
 
   return (
       <>
-        <Box
-          sx={{
-            mt: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
+        <WhiteBox>
           <Typography variant="h4" sx={{ mb: 2 }}>Register</Typography>
           {loading
             ? (
@@ -99,22 +97,27 @@ export default function RegisterPage () {
                   />
                 </Grid>
               </Grid>
-              <Button
+              <PrimaryButton
                 type='submit'
-                variant="contained"
                 fullWidth
-                sx={{ mt: 3, mb: 2 }}
+                sx={ { mt: 3, mb: 3 } }
               >
               Register
-              </Button>
+              </PrimaryButton>
+              <Typography>
+                Already have an account?&nbsp;
+                <Link to="/login" style={{ textDecoration: 'none' }}>Sign In</Link>
+              </Typography>
+              <PrimaryButton
+                variant="contained"
+                onClick={() => { navigate('/') }}
+                sx = { { alignSelf: 'flex-start', mt: 3 } }
+              >
+                <KeyboardBackspaceIcon sx={{ mr: 1 }}/>Home
+              </PrimaryButton>
             </Box>
               )}
-          <Typography variant="h6">
-            Already have an account?
-            <Link to="/login">Sign In</Link>
-          </Typography>
-          <Button variant="contained" onClick={() => { navigate('/') }}>Back to Home</Button>
-        </Box>
+        </WhiteBox>
       </>
   );
 }

@@ -1,11 +1,10 @@
 import React from 'react';
-import { Button } from '@mui/material';
 import { styled } from '@mui/system';
+import PrimaryButton from './PrimaryButton';
 
-const StyledButton = styled(Button)({
-  height: '350px',
+const StyledButton = styled(PrimaryButton)({
+  height: '120px',
   width: '350px',
-  padding: '50px'
 });
 
 export default function HomePageButton (props) {
