@@ -10,6 +10,7 @@ import WhiteBox from '../components/WhiteBox';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from '../axios';
 import { useContext, Context } from '../authContext';
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 
 export default function RegisterPage () {
   const navigate = useNavigate();
@@ -107,6 +108,13 @@ export default function RegisterPage () {
                 Already have an account?&nbsp;
                 <Link to="/login" style={{ textDecoration: 'none' }}>Sign In</Link>
               </Typography>
+              <PrimaryButton
+                variant="contained"
+                onClick={() => { navigate('/') }}
+                sx = { { alignSelf: 'flex-start', mt: 3 } }
+              >
+                <KeyboardBackspaceIcon sx={{ mr: 1 }}/>Home
+              </PrimaryButton>
             </Box>
               )}
         </WhiteBox>

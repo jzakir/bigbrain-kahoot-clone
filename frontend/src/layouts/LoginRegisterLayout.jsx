@@ -1,7 +1,6 @@
 import React from 'react';
 import { Container, Box } from '@mui/material';
-import { useNavigate, Outlet } from 'react-router-dom';
-import PrimaryButton from '../components/PrimaryButton';
+import { Outlet } from 'react-router-dom';
 
 const boxStyle = {
   padding: '30px',
@@ -11,8 +10,6 @@ const boxStyle = {
 };
 
 export default function LoginRegisterLayout () {
-  const navigate = useNavigate();
-
   return (
     <>
       <Container component="div" style={ {
@@ -26,13 +23,6 @@ export default function LoginRegisterLayout () {
           <Box style={ boxStyle }>
               {/* Outlet is where login/register form will be rendered */}
               <Outlet/>
-            <PrimaryButton
-              variant="contained"
-              onClick={() => { navigate('/') }}
-              sx = { { alignSelf: 'flex-start', mt: 3 } }
-            >
-              Back to Home
-            </PrimaryButton>
           </Box>
         </Container>
       </Container>

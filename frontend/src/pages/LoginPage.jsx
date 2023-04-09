@@ -5,6 +5,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useContext, Context } from '../authContext';
 import PrimaryButton from '../components/PrimaryButton';
 import WhiteBox from '../components/WhiteBox';
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 
 export default function LoginPage () {
   const [loading, setLoading] = React.useState(false);
@@ -102,6 +103,13 @@ export default function LoginPage () {
                 Don&apos;t have an account?&nbsp;
                 <Link to="/register" style={{ textDecoration: 'none' }}>Register</Link>
               </Typography>
+              <PrimaryButton
+                variant="contained"
+                onClick={() => { navigate('/') }}
+                sx = { { alignSelf: 'flex-start', mt: 3 } }
+              >
+                <KeyboardBackspaceIcon sx={{ mr: 1 }}/>Home
+              </PrimaryButton>
             </Box>
             )
         }
