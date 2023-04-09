@@ -5,7 +5,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useContext, Context } from '../authContext';
 import PrimaryButton from '../components/PrimaryButton';
 import WhiteBox from '../components/WhiteBox';
-import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 
 export default function LoginPage () {
   const [loading, setLoading] = React.useState(false);
@@ -108,7 +108,7 @@ export default function LoginPage () {
                 onClick={() => { navigate('/') }}
                 sx = { { alignSelf: 'flex-start', mt: 3 } }
               >
-                <KeyboardBackspaceIcon sx={{ mr: 1 }}/>Home
+                <ArrowBackIosIcon sx={{ mr: 1 }}/>Home
               </PrimaryButton>
             </Box>
             )
