@@ -1,12 +1,12 @@
 import React from 'react';
 import { Container } from '@mui/material';
 import { Outlet } from 'react-router-dom';
-import NavBar from '../components/NavBar';
+// import NavBar from '../components/NavBar';
 
-export default function SiteLayout () {
+export default function SiteLayout (props) {
   return (
     <>
-      <NavBar/>
+      {props.nav}
       <Container component="div" style={ {
         minHeight: '100vh',
         minWidth: '100vw',

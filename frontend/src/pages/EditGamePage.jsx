@@ -14,7 +14,7 @@ export default function EditGamePage () {
   // const navigate = useNavigate();
   const { authToken } = useContext(Context);
   const [loading, setLoading] = React.useState(true);
-  const [gameCard, setGame] = React.useState('Yo');
+  const [gameCard, setGame] = React.useState(null);
   const params = useParams();
 
   const createGameCard = (game) => {
@@ -30,7 +30,6 @@ export default function EditGamePage () {
         <Typography gutterBottom variant="h5" component="h2">
         <Input
           variant="outlined"
-          margin="normal"
           name="gameName"
           type="text"
           placeholder="Game Title"
@@ -58,8 +57,6 @@ export default function EditGamePage () {
     </Card>);
   }
 
-  createGameCard('yo');
-
   const fetchGameDetails = () => {
     axios.get(`/admin/quiz/${params.gameId}`, { headers: { Authorization: `Bearer ${authToken}` } })
       .then(response => {
@@ -68,10 +65,10 @@ export default function EditGamePage () {
         // setQuestions(response.data.questions) here for the question cards
         setLoading(false);
       })
-      .catch(err => console.error(err))
+      .catch(err => alert(err))
   }
 
-  React.useEffect(fetchGameDetails, []);
+  React.useEffect(() => fetchGameDetails(), []);
 
   return (
     <>

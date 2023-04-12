@@ -10,6 +10,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import { Context, useContext } from '../authContext';
 import PrimaryButton from '../components/PrimaryButton';
+import { useNavigate, Link } from 'react-router-dom';
 
 const style = {
   position: 'absolute',
@@ -24,13 +25,13 @@ const style = {
 };
 
 export default function DashBoard () {
-  const { authToken } = useContext(Context);
+  const { authToken, setAuthToken } = useContext(Context);
 
   const [allQuizzes, setQuizzes] = React.useState([]);
   const [modalOpen, setModalOpen] = React.useState(false);
-  const [quizName, setQuizName] = React.useState('');
+  const [newQuizName, setNewQuizName] = React.useState('');
 
-  console.log(quizName);
+  const navigate = useNavigate();
 
   const fetchQuizzes = () => {
     axios.get('/admin/quiz', { headers: { Authorization: `Bearer ${authToken}` } })
@@ -39,7 +40,7 @@ export default function DashBoard () {
   };
 
   const handleCreateQuiz = () => {
-    axios.post('/admin/quiz/new', { name: quizName }, { headers: { Authorization: `Bearer ${authToken}` } })
+    axios.post('/admin/quiz/new', { name: newQuizName }, { headers: { Authorization: `Bearer ${authToken}` } })
       .then(data => {
         console.log(data);
         fetchQuizzes();
@@ -80,9 +81,11 @@ export default function DashBoard () {
           </Typography>
         </CardContent>
         <CardActions sx={{ alignSelf: 'flex-end' }}>
-          <IconButton size="small">
-            <EditIcon />
-          </IconButton>
+          <Link to={`/edit/${quiz.id}`}>
+            <IconButton size="small">
+              <EditIcon />
+            </IconButton>
+          </Link>
           <IconButton size="small" onClick={() => { deleteQuiz(quiz.id) }}>
             <DeleteIcon />
           </IconButton>
@@ -121,6 +124,16 @@ export default function DashBoard () {
           <Grid container spacing={4}>
             {allQuizzes.map(createCard)}
           </Grid>
+          <PrimaryButton sx={{ height: '50%', alignSelf: 'center' }} onClick={() => {
+            axios
+              .post('/admin/auth/logout', {}, { headers: { Authorization: `Bearer ${authToken}` } })
+              .then(response => {
+                localStorage.removeItem('token');
+                setAuthToken('');
+                navigate('/');
+              })
+              .catch(err => console.log(err));
+          }}>Log Out (Working)</PrimaryButton>
         </Container>
       </main>
       <Modal
@@ -141,7 +154,7 @@ export default function DashBoard () {
             type="text"
             id="quizname"
             autoFocus
-            onChange={(e) => setQuizName(e.target.value)}
+            onChange={(e) => setNewQuizName(e.target.value)}
             onKeyUp={(e) => {
               e.key === 'Enter' && handleCreateQuiz();
             }}

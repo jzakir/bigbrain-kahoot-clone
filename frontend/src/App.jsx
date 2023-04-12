@@ -9,6 +9,7 @@ import { Context } from './authContext';
 import LoginRegisterLayout from './layouts/LoginRegisterLayout';
 import PrivateRoute from './layouts/PrivateRoute';
 import SiteLayout from './layouts/SiteLayout';
+import NavBar from './components/NavBar';
 
 document.title = 'BigBrain!';
 
@@ -28,7 +29,7 @@ function App () {
             <Route exact path="register" element={<RegisterPage/>}/>
             <Route exact path="login" element={<LoginPage/>}/>
           </Route>
-          <Route element={<SiteLayout/>}>
+          <Route element={<SiteLayout nav={<NavBar/>}/>}>
             <Route
               exact
               path="dashboard"
@@ -37,9 +38,9 @@ function App () {
                   <DashBoard/>
                 </PrivateRoute>}
             />
-            <Route path="edit">
+          </Route>
+          <Route path="edit" element={<SiteLayout nav={<NavBar/>}/>}>
               <Route path=":gameId" element={<EditGamePage/>}/>
-            </Route>
           </Route>
         </Routes>
       </BrowserRouter>
