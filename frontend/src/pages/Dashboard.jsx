@@ -1,22 +1,60 @@
 import React from 'react';
-// import axios from '../axios';
+import axios from '../axios';
 import { useNavigate } from 'react-router-dom';
-import { Button, Box, Container, Typography, Grid, Card, CardMedia, CardContent, CardActions } from '@mui/material';
+import {
+  Box, Container, Typography,
+  Grid, Card, CardMedia, CardContent, CardActions, IconButton
+} from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import { Context, useContext } from '../authContext';
+import PrimaryButton from '../components/PrimaryButton';
 
 export default function DashBoard () {
   const navigate = useNavigate();
   const { authToken } = useContext(Context);
 
-  const cards = [1, 2, 3, 4, 5, 6, 7, 8];
+  const [allQuizzes, setQuizzes] = React.useState([]);
+
+  const fetchQuizzes = () => {
+    axios.get('/admin/quiz', { headers: { Authorization: `Bearer ${authToken}` } })
+      .then(data => setQuizzes(data.data.quizzes))
+      .catch(err => console.log(err));
+  };
+
+  const createQuiz = (name) => {
+    axios.post('/admin/quiz/new', { name }, { headers: { Authorization: `Bearer ${authToken}` } })
+      .then(data => {
+        console.log(data);
+        fetchQuizzes();
+      })
+      .catch(err => console.log(err));
+  };
+
+  const deleteQuiz = (quizId) => {
+    axios.delete(`admin/quiz/${quizId}`, {
+      headers: {
+        Authorization: `Bearer ${authToken}`
+      }
+    })
+      .then(data => {
+        console.log(data);
+        fetchQuizzes();
+      })
+      .catch(err => console.log(err));
+  }
+
+  React.useEffect(() => {
+    fetchQuizzes();
+  }, []);
 
   return (
     <>
-      <p>Token: {authToken}</p>
       <main>
         <Box
           sx={{
             bgcolor: 'background.paper',
+            pt: 6
           }}
         >
           <Container>
@@ -31,30 +69,33 @@ export default function DashBoard () {
             </Typography>
           </Container>
         </Box>
-        <Container maxWidth="lg">
+        <Container maxWidth="lg" sx={{ pb: 6 }}>
           <Grid container spacing={4}>
-            {cards.map((card) => (
-              <Grid item key={card} xs={12} sm={6} md={4}>
+            {allQuizzes.map((card) => (
+              <Grid item key={card.id} xs={12} sm={6} md={4}>
                 <Card
                   sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
                 >
                   <CardMedia
                     component="img"
-                    image="https://kahoot.com/files/2020/03/Schools-library-GettingStarted-570x320.png"
+                    image={card.thumbnail || 'https://kahoot.com/files/2020/03/Schools-library-GettingStarted-570x320.png'}
                     alt="Quiz Thumbnail"
                   />
                   <CardContent sx={{ flexGrow: 1 }}>
                     <Typography gutterBottom variant="h5" component="h2">
-                      Heading
+                      {card.name}
                     </Typography>
                     <Typography>
-                      This is a media card. You can use this section to describe the
-                      content.
+                      TODO: Number Of Questions + Total Time to complete
                     </Typography>
                   </CardContent>
                   <CardActions>
-                    <Button size="small">View</Button>
-                    <Button size="small">Edit</Button>
+                    <IconButton size="small">
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton size="small" onClick={() => { deleteQuiz(card.id) }}>
+                      <DeleteIcon />
+                    </IconButton>
                   </CardActions>
                 </Card>
               </Grid>
@@ -62,7 +103,9 @@ export default function DashBoard () {
           </Grid>
         </Container>
       </main>
-      <Button variant="contained" onClick={() => { navigate('/') }}>Back to Home</Button>
+      <PrimaryButton variant="contained" onClick={() => { createQuiz('Test Quiz') }}>Create Dummy Quiz</PrimaryButton>
+      <br />
+      <PrimaryButton variant="contained" onClick={() => { navigate('/') }}>Back to Home</PrimaryButton>
     </>
   );
 }
