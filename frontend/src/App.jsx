@@ -4,6 +4,7 @@ import HomePage from './pages/HomePage';
 import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
 import DashBoard from './pages/Dashboard';
+import EditGamePage from './pages/EditGamePage';
 import { Context } from './authContext';
 import LoginRegisterLayout from './layouts/LoginRegisterLayout';
 import PrivateRoute from './layouts/PrivateRoute';
@@ -36,6 +37,9 @@ function App () {
                   <DashBoard/>
                 </PrivateRoute>}
             />
+            <Route path="edit">
+              <Route path=":gameId" element={<EditGamePage/>}/>
+            </Route>
           </Route>
         </Routes>
       </BrowserRouter>
