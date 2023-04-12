@@ -1,6 +1,5 @@
 import React from 'react';
 import axios from '../axios';
-import { useNavigate } from 'react-router-dom';
 import {
   Box, Container, Typography, TextField,
   Grid, Card, CardMedia, CardContent, CardActions, IconButton,
@@ -25,7 +24,6 @@ const style = {
 };
 
 export default function DashBoard () {
-  const navigate = useNavigate();
   const { authToken } = useContext(Context);
 
   const [allQuizzes, setQuizzes] = React.useState([]);
@@ -106,7 +104,7 @@ export default function DashBoard () {
             pt: 6
           }}
         >
-          <Container>
+          <Container sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Typography
               component="h1"
               variant="h2"
@@ -116,6 +114,7 @@ export default function DashBoard () {
             >
               Dashboard
             </Typography>
+            <PrimaryButton sx={{ height: '50%', alignSelf: 'center' }} onClick={() => setModalOpen(true)}>Create New Quiz<AddBoxIcon sx={{ pl: 0.5 }}/></PrimaryButton>
           </Container>
         </Box>
         <Container maxWidth="lg" sx={{ pb: 6 }}>
@@ -124,9 +123,6 @@ export default function DashBoard () {
           </Grid>
         </Container>
       </main>
-      <PrimaryButton onClick={() => setModalOpen(true)}>Create New Quiz</PrimaryButton>
-      <br />
-      <PrimaryButton onClick={() => { navigate('/') }}>Back to Home</PrimaryButton>
       <Modal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
@@ -151,7 +147,7 @@ export default function DashBoard () {
             }}
           />
           <Box sx={{ width: '100%', justifyContent: 'flex-end', display: 'flex', pt: 1 }}>
-            <PrimaryButton onClick={handleCreateQuiz}>Create<AddBoxIcon/></PrimaryButton>
+            <PrimaryButton onClick={handleCreateQuiz}>Create<AddBoxIcon sx={{ pl: 0.5 }}/></PrimaryButton>
           </Box>
         </Box>
       </Modal>
