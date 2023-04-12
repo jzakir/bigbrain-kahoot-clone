@@ -79,7 +79,7 @@ export default function DashBoard () {
             TODO: Number Of Questions + Total Time to complete
           </Typography>
         </CardContent>
-        <CardActions>
+        <CardActions sx={{ alignSelf: 'flex-end' }}>
           <IconButton size="small">
             <EditIcon />
           </IconButton>
