@@ -2,19 +2,37 @@ import React from 'react';
 import axios from '../axios';
 import { useNavigate } from 'react-router-dom';
 import {
-  Box, Container, Typography,
-  Grid, Card, CardMedia, CardContent, CardActions, IconButton
+  Box, Container, Typography, TextField,
+  Grid, Card, CardMedia, CardContent, CardActions, IconButton,
 } from '@mui/material';
+import Modal from '@mui/material/Modal';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import AddBoxIcon from '@mui/icons-material/AddBox';
 import { Context, useContext } from '../authContext';
 import PrimaryButton from '../components/PrimaryButton';
+
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+};
 
 export default function DashBoard () {
   const navigate = useNavigate();
   const { authToken } = useContext(Context);
 
   const [allQuizzes, setQuizzes] = React.useState([]);
+  const [modalOpen, setModalOpen] = React.useState(false);
+  const [quizName, setQuizName] = React.useState('');
+
+  console.log(quizName);
 
   const fetchQuizzes = () => {
     axios.get('/admin/quiz', { headers: { Authorization: `Bearer ${authToken}` } })
@@ -22,13 +40,14 @@ export default function DashBoard () {
       .catch(err => console.log(err));
   };
 
-  const createQuiz = (name) => {
-    axios.post('/admin/quiz/new', { name }, { headers: { Authorization: `Bearer ${authToken}` } })
+  const handleCreateQuiz = () => {
+    axios.post('/admin/quiz/new', { name: quizName }, { headers: { Authorization: `Bearer ${authToken}` } })
       .then(data => {
         console.log(data);
         fetchQuizzes();
       })
-      .catch(err => console.log(err));
+      .catch(err => console.log(err))
+      .finally(() => setModalOpen(false));
   };
 
   const deleteQuiz = (quizId) => {
@@ -43,6 +62,36 @@ export default function DashBoard () {
       })
       .catch(err => console.log(err));
   }
+
+  const createCard = (quiz) => {
+    return (<Grid item key={quiz.id} xs={12} sm={6} md={4}>
+      <Card
+        sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+      >
+        <CardMedia
+          component="img"
+          image={quiz.thumbnail || 'https://kahoot.com/files/2020/03/Schools-library-GettingStarted-570x320.png'}
+          alt="Quiz Thumbnail"
+        />
+        <CardContent sx={{ flexGrow: 1 }}>
+          <Typography gutterBottom variant="h5" component="h2">
+            {quiz.name}
+          </Typography>
+          <Typography>
+            TODO: Number Of Questions + Total Time to complete
+          </Typography>
+        </CardContent>
+        <CardActions>
+          <IconButton size="small">
+            <EditIcon />
+          </IconButton>
+          <IconButton size="small" onClick={() => { deleteQuiz(quiz.id) }}>
+            <DeleteIcon />
+          </IconButton>
+        </CardActions>
+      </Card>
+    </Grid>);
+  };
 
   React.useEffect(() => {
     fetchQuizzes();
@@ -61,51 +110,51 @@ export default function DashBoard () {
             <Typography
               component="h1"
               variant="h2"
-              align="center"
+              align="left"
               color="text.primary"
               gutterBottom
             >
-              Available Quizzes
+              Dashboard
             </Typography>
           </Container>
         </Box>
         <Container maxWidth="lg" sx={{ pb: 6 }}>
           <Grid container spacing={4}>
-            {allQuizzes.map((card) => (
-              <Grid item key={card.id} xs={12} sm={6} md={4}>
-                <Card
-                  sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
-                >
-                  <CardMedia
-                    component="img"
-                    image={card.thumbnail || 'https://kahoot.com/files/2020/03/Schools-library-GettingStarted-570x320.png'}
-                    alt="Quiz Thumbnail"
-                  />
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography gutterBottom variant="h5" component="h2">
-                      {card.name}
-                    </Typography>
-                    <Typography>
-                      TODO: Number Of Questions + Total Time to complete
-                    </Typography>
-                  </CardContent>
-                  <CardActions>
-                    <IconButton size="small">
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton size="small" onClick={() => { deleteQuiz(card.id) }}>
-                      <DeleteIcon />
-                    </IconButton>
-                  </CardActions>
-                </Card>
-              </Grid>
-            ))}
+            {allQuizzes.map(createCard)}
           </Grid>
         </Container>
       </main>
-      <PrimaryButton variant="contained" onClick={() => { createQuiz('Test Quiz') }}>Create Dummy Quiz</PrimaryButton>
+      <PrimaryButton onClick={() => setModalOpen(true)}>Create New Quiz</PrimaryButton>
       <br />
-      <PrimaryButton variant="contained" onClick={() => { navigate('/') }}>Back to Home</PrimaryButton>
+      <PrimaryButton onClick={() => { navigate('/') }}>Back to Home</PrimaryButton>
+      <Modal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography variant="h6" component="h2">
+            Create New Quiz
+          </Typography>
+          <TextField
+            fullWidth
+            sx={{ mt: 2 }}
+            name="quizName"
+            label="Quiz Name"
+            type="text"
+            id="quizname"
+            autoFocus
+            onChange={(e) => setQuizName(e.target.value)}
+            onKeyUp={(e) => {
+              e.key === 'Enter' && handleCreateQuiz();
+            }}
+          />
+          <Box sx={{ width: '100%', justifyContent: 'flex-end', display: 'flex', pt: 1 }}>
+            <PrimaryButton onClick={handleCreateQuiz}>Create<AddBoxIcon/></PrimaryButton>
+          </Box>
+        </Box>
+      </Modal>
     </>
   );
 }
