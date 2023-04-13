@@ -1,27 +1,24 @@
 import React from 'react';
 import { AppBar, Toolbar, IconButton, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-// import { Context, useContext } from '../authContext';
+import { Context, useContext } from '../authContext';
 import PrimaryButton from './PrimaryButton'
-// import axios from '../axios';
+import axios from '../axios';
 
 export default function NavBar () {
   const navigate = useNavigate();
-  // const { authToken, setAuthToken } = useContext(Context);
-  // const [isLoggedOut, setLoggedOut] = React.useState(false);
+  const { authToken, setAuthToken } = useContext(Context);
 
-  // React.useEffect(() => {
-  //   if (isLoggedOut) {
-  //     axios
-  //       .post('/admin/auth/logout', {}, { headers: { Authorization: `Bearer ${authToken}` } })
-  //       .then(response => {
-  //         localStorage.removeItem('token');
-  //         setAuthToken('');
-  //         navigate('/');
-  //       })
-  //       .catch(err => console.log(err));
-  //   }
-  // }, [isLoggedOut]);
+  const logout = () => {
+    axios
+      .post('/admin/auth/logout', {}, { headers: { Authorization: `Bearer ${authToken}` } })
+      .then(response => {
+        localStorage.removeItem('token');
+        setAuthToken('');
+        navigate('/');
+      })
+      .catch(err => console.log(err));
+  };
 
   return (
     <>
@@ -38,7 +35,7 @@ export default function NavBar () {
                     <Typography>Dashboard</Typography>
                   </IconButton>
                 </div>
-                <PrimaryButton onClick={() => alert('NavBar logout temporarily not working')}>Log Out</PrimaryButton>
+                <PrimaryButton onClick={logout}>Log Out</PrimaryButton>
             </Toolbar>
         </AppBar>
     </>
