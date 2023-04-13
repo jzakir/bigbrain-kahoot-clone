@@ -4,7 +4,7 @@ import {
   Box, Container, Typography, TextField,
   Grid, Card, CardMedia, CardContent, CardActions, IconButton,
 } from '@mui/material';
-import Modal from '@mui/material/Modal';
+import PopUpModal from '../components/PopUpModal';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import AddBoxIcon from '@mui/icons-material/AddBox';
@@ -13,18 +13,6 @@ import PrimaryButton from '../components/PrimaryButton';
 import GradientButton from '../components/GradientButton';
 import { useNavigate, Link } from 'react-router-dom';
 import { defaultQuizThumbnail } from '../helpers';
-
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  p: 4,
-};
 
 export default function DashBoard () {
   const { authToken, setAuthToken } = useContext(Context);
@@ -73,7 +61,7 @@ export default function DashBoard () {
           component="img"
           image={quiz.thumbnail || defaultQuizThumbnail}
           alt="Quiz Thumbnail"
-          sx={{ maxHeight: '300px' }}
+          sx={{ maxHeight: '200px' }}
         />
         <CardContent sx={{ flexGrow: 1 }}>
           <Typography gutterBottom variant="h5" component="h2">
@@ -140,13 +128,10 @@ export default function DashBoard () {
           }}>Log Out (Working)</GradientButton>
         </Container>
       </main>
-      <Modal
+      <PopUpModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
       >
-        <Box sx={style}>
           <Typography variant="h6" component="h2">
             Create New Quiz
           </Typography>
@@ -166,8 +151,7 @@ export default function DashBoard () {
           <Box sx={{ width: '100%', justifyContent: 'flex-end', display: 'flex', pt: 1 }}>
             <PrimaryButton onClick={handleCreateQuiz}>Create<AddBoxIcon sx={{ pl: 0.5 }}/></PrimaryButton>
           </Box>
-        </Box>
-      </Modal>
+      </PopUpModal>
     </>
   );
 }

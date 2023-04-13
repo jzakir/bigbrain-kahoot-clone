@@ -8,8 +8,10 @@ import {
 import SaveIcon from '@mui/icons-material/Save';
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
 import FileDownloadDoneIcon from '@mui/icons-material/FileDownloadDone';
+import DoneIcon from '@mui/icons-material/Done';
 import PrimaryButton from '../components/PrimaryButton';
 import GradientButton from '../components/GradientButton';
+import PopUpModal from '../components/PopUpModal';
 import { Context, useContext } from '../authContext';
 import { defaultQuizThumbnail, fileToDataUrl } from '../helpers';
 
@@ -18,6 +20,7 @@ export default function EditGamePage () {
   const { authToken } = useContext(Context);
   const [loading, setLoading] = React.useState(true);
   const [game, setGame] = React.useState(null);
+  const [changesSavedModal, setChangesSavedModal] = React.useState(false);
   const params = useParams();
 
   const [uploadedFile, setUploadedFile] = React.useState(null);
@@ -29,7 +32,10 @@ export default function EditGamePage () {
         name: newQuizName,
         ...(uploadedFile) && { thumbnail: await fileToDataUrl(uploadedFile) }
       }, { headers: { Authorization: `Bearer ${authToken}` } })
-      .then(() => fetchGameDetails())
+      .then(() => {
+        setChangesSavedModal(true);
+        fetchGameDetails();
+      })
       .catch(err => console.error(err));
   }
 
@@ -121,6 +127,19 @@ export default function EditGamePage () {
           <GradientButton sx={{ height: '50%', alignSelf: 'center' }} onClick={() => navigate('/dashboard')}>Save Changes<SaveIcon sx={{ pl: 0.5 }}/></GradientButton>
         </Container>
       </main>
+      <PopUpModal
+        open={changesSavedModal}
+        onClose={() => setChangesSavedModal(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={{ width: '100%', justifyContent: 'space-between', display: 'flex', pt: 1 }}>
+          <Typography variant="h6" component="h2">
+            Changes Saved!
+          </Typography>
+          <PrimaryButton onClick={() => setChangesSavedModal(false)}>Ok<DoneIcon sx={{ pl: 0.5 }}/></PrimaryButton>
+        </Box>
+      </PopUpModal>
     </>
   );
 }
