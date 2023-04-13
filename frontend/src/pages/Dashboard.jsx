@@ -11,17 +11,15 @@ import AddBoxIcon from '@mui/icons-material/AddBox';
 import { Context, useContext } from '../authContext';
 import PrimaryButton from '../components/PrimaryButton';
 import GradientButton from '../components/GradientButton';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { defaultQuizThumbnail } from '../helpers';
 
 export default function DashBoard () {
-  const { authToken, setAuthToken } = useContext(Context);
+  const { authToken } = useContext(Context);
 
   const [allQuizzes, setQuizzes] = React.useState([]);
   const [modalOpen, setModalOpen] = React.useState(false);
   const [newQuizName, setNewQuizName] = React.useState('');
-
-  const navigate = useNavigate();
 
   const fetchQuizzes = () => {
     axios.get('/admin/quiz', { headers: { Authorization: `Bearer ${authToken}` } })
@@ -115,17 +113,6 @@ export default function DashBoard () {
           <Grid container spacing={4}>
             {allQuizzes.map(createCard)}
           </Grid>
-          <br />
-          <GradientButton sx={{ height: '50%', alignSelf: 'center' }} onClick={() => {
-            axios
-              .post('/admin/auth/logout', {}, { headers: { Authorization: `Bearer ${authToken}` } })
-              .then(response => {
-                localStorage.removeItem('token');
-                setAuthToken('');
-                navigate('/');
-              })
-              .catch(err => console.log(err));
-          }}>Log Out (Working)</GradientButton>
         </Container>
       </main>
       <PopUpModal
