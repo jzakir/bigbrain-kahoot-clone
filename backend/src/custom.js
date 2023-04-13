@@ -1,11 +1,33 @@
 /*
+  Question Data structure
+  question = {
+    type: 'multiple' || 'single',
+    questionString: 'Do you like option A or B better?',
+    selections: [
+      {answer: 'Option A', answerId: 0},
+      {answer: 'Option B', answerId: 1},
+    ],
+    correctAnswerIds: [0]
+    points: 10,
+    url: 'https://youtube.com',
+    timeLimit: 20, (seconds)
+}
+*/
+
+/*
  For a given data structure of a question, produce another
  object that doesn't contain any important meta data (e.g. the answer)
  to return to a "player"
 */
 export const quizQuestionPublicReturn = question => {
   console.log('See question: ', question);
-  return question;
+  return {
+    type: question.type,
+    questionString: question.questionString,
+    selections: question.selections,
+    url: question.url,
+    timeLimit: question.timeLimit
+  };
 };
 
 /*
@@ -13,9 +35,7 @@ export const quizQuestionPublicReturn = question => {
  the correct answers (minimum 1).
 */
 export const quizQuestionGetCorrectAnswers = question => {
-  return [
-    123,
-  ]; // For a single answer
+  return question.correctAnswerIds;
 };
 
 /*
@@ -23,11 +43,7 @@ export const quizQuestionGetCorrectAnswers = question => {
  all of the answers, correct or incorrect.
 */
 export const quizQuestionGetAnswers = question => {
-  return [
-    123,
-    456,
-    678,
-  ]; // For a single answer
+  return question.selections.map(q => q.answerId);
 };
 
 /*
@@ -35,5 +51,5 @@ export const quizQuestionGetAnswers = question => {
  of the question once it starts. (Seconds)
 */
 export const quizQuestionGetDuration = question => {
-  return 10;
+  return question.timeLimit;
 };

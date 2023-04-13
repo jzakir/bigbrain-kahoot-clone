@@ -3,11 +3,13 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
-// import NavBar from './components/NavBar';
 import DashBoard from './pages/Dashboard';
+import EditGamePage from './pages/EditGamePage';
 import { Context } from './authContext';
 import LoginRegisterLayout from './layouts/LoginRegisterLayout';
 import PrivateRoute from './layouts/PrivateRoute';
+import SiteLayout from './layouts/SiteLayout';
+import NavBar from './components/NavBar';
 
 document.title = 'BigBrain!';
 
@@ -27,14 +29,19 @@ function App () {
             <Route exact path="register" element={<RegisterPage/>}/>
             <Route exact path="login" element={<LoginPage/>}/>
           </Route>
-          <Route
-            exact
-            path="dashboard"
-            element={
-              <PrivateRoute>
-                <DashBoard/>
-              </PrivateRoute>}
-          />
+          <Route element={<SiteLayout nav={<NavBar/>}/>}>
+            <Route
+              exact
+              path="dashboard"
+              element={
+                <PrivateRoute>
+                  <DashBoard/>
+                </PrivateRoute>}
+            />
+          </Route>
+          <Route path="edit" element={<SiteLayout nav={<NavBar/>}/>}>
+              <Route path=":gameId" element={<PrivateRoute><EditGamePage/></PrivateRoute>}/>
+          </Route>
         </Routes>
       </BrowserRouter>
     </Context.Provider>
