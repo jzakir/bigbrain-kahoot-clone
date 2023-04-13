@@ -10,7 +10,9 @@ import EditIcon from '@mui/icons-material/Edit';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import { Context, useContext } from '../authContext';
 import PrimaryButton from '../components/PrimaryButton';
+import GradientButton from '../components/GradientButton';
 import { useNavigate, Link } from 'react-router-dom';
+import { defaultQuizThumbnail } from '../helpers';
 
 const style = {
   position: 'absolute',
@@ -65,11 +67,11 @@ export default function DashBoard () {
   const createCard = (quiz) => {
     return (<Grid item key={quiz.id} xs={12} sm={6} md={4}>
       <Card
-        sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+        sx={{ height: '100%', display: 'flex', flexDirection: 'column', background: 'linear-gradient(315deg, #d9e4f5 0%, #f5e3e6 74%)' }}
       >
         <CardMedia
           component="img"
-          image={quiz.thumbnail || 'https://kahoot.com/files/2020/03/Schools-library-GettingStarted-570x320.png'}
+          image={quiz.thumbnail || defaultQuizThumbnail}
           alt="Quiz Thumbnail"
         />
         <CardContent sx={{ flexGrow: 1 }}>
@@ -103,7 +105,6 @@ export default function DashBoard () {
       <main>
         <Box
           sx={{
-            bgcolor: 'background.paper',
             pt: 6
           }}
         >
@@ -112,19 +113,21 @@ export default function DashBoard () {
               component="h1"
               variant="h2"
               align="left"
-              color="text.primary"
+              color="background.paper"
               gutterBottom
+              style={{ textShadow: '2px 3px 5px rgba(0,0,0,0.5)' }}
             >
               Dashboard
             </Typography>
-            <PrimaryButton sx={{ height: '50%', alignSelf: 'center' }} onClick={() => setModalOpen(true)}>Create New Quiz<AddBoxIcon sx={{ pl: 0.5 }}/></PrimaryButton>
+            <GradientButton sx={{ height: '50%', alignSelf: 'center' }} onClick={() => setModalOpen(true)}>Create New Quiz<AddBoxIcon sx={{ pl: 0.5 }}/></GradientButton>
           </Container>
         </Box>
         <Container maxWidth="lg" sx={{ pb: 6 }}>
           <Grid container spacing={4}>
             {allQuizzes.map(createCard)}
           </Grid>
-          <PrimaryButton sx={{ height: '50%', alignSelf: 'center' }} onClick={() => {
+          <br />
+          <GradientButton sx={{ height: '50%', alignSelf: 'center' }} onClick={() => {
             axios
               .post('/admin/auth/logout', {}, { headers: { Authorization: `Bearer ${authToken}` } })
               .then(response => {
@@ -133,7 +136,7 @@ export default function DashBoard () {
                 navigate('/');
               })
               .catch(err => console.log(err));
-          }}>Log Out (Working)</PrimaryButton>
+          }}>Log Out (Working)</GradientButton>
         </Container>
       </main>
       <Modal

@@ -11,7 +11,8 @@ export default function SiteLayout (props) {
         minHeight: '100vh',
         minWidth: '100vw',
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        background: 'linear-gradient(to right, #434343 0%, black 100%)'
       } }>
         <Outlet/>
       </Container>
