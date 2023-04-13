@@ -40,7 +40,7 @@ function App () {
             />
           </Route>
           <Route path="edit" element={<SiteLayout nav={<NavBar/>}/>}>
-              <Route path=":gameId" element={<EditGamePage/>}/>
+              <Route path=":gameId" element={<PrivateRoute><EditGamePage/></PrivateRoute>}/>
           </Route>
         </Routes>
       </BrowserRouter>
