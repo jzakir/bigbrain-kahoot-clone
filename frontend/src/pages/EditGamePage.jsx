@@ -3,7 +3,7 @@ import axios from '../axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Box, Container, Typography, Input,
-  Grid, Card, CardMedia, CardContent, CardActions, CircularProgress
+  Grid, Card, CardMedia, CardContent, CardActions
 } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
@@ -14,6 +14,7 @@ import GradientButton from '../components/GradientButton';
 import PopUpModal from '../components/PopUpModal';
 import { Context, useContext } from '../authContext';
 import { defaultQuizThumbnail, fileToDataUrl } from '../helpers';
+import Loading from '../layouts/Loading';
 
 export default function EditGamePage () {
   const navigate = useNavigate();
@@ -118,7 +119,7 @@ export default function EditGamePage () {
           </Container>
 
           <Container maxWidth="lg" sx={{ pb: 6 }}>
-            {loading ? <CircularProgress/> : createGameCard(game)}
+            {loading ? <Loading/> : createGameCard(game)}
           </Container>
         </Box>
         <Container maxWidth="lg" sx={{ pb: 6 }}>
