@@ -73,6 +73,7 @@ export default function DashBoard () {
           component="img"
           image={quiz.thumbnail || defaultQuizThumbnail}
           alt="Quiz Thumbnail"
+          sx={{ maxHeight: '300px' }}
         />
         <CardContent sx={{ flexGrow: 1 }}>
           <Typography gutterBottom variant="h5" component="h2">
