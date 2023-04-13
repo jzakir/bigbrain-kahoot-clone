@@ -8,20 +8,6 @@ import axios from '../axios';
 export default function NavBar () {
   const navigate = useNavigate();
   const { authToken, setAuthToken } = useContext(Context);
-  // const [isLoggedOut, setLoggedOut] = React.useState(false);
-
-  // React.useEffect(() => {
-  //   if (isLoggedOut) {
-  //     axios
-  //       .post('/admin/auth/logout', {}, { headers: { Authorization: `Bearer ${authToken}` } })
-  //       .then(response => {
-  //         localStorage.removeItem('token');
-  //         setAuthToken('');
-  //         navigate('/');
-  //       })
-  //       .catch(err => console.log(err));
-  //   }
-  // }, [isLoggedOut]);
 
   const logout = () => {
     axios
