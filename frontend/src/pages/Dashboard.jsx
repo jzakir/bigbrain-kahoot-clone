@@ -23,9 +23,25 @@ export default function DashBoard () {
   const fetchQuizzes = () => {
     setLoading(true);
     axios.get('/admin/quiz', { headers: { Authorization: `Bearer ${authToken}` } })
-      .then(data => setQuizzes(data.data.quizzes))
-      .then(() => setLoading(false))
-      .catch(err => console.log(err));
+      .then(data => {
+        const requests = data.data.quizzes.map(quiz => {
+          return new Promise((resolve, reject) => {
+            axios.get(`/admin/quiz/${quiz.id}`, { headers: { Authorization: `Bearer ${authToken}` } })
+              .then(data => {
+                const newData = { ...(data.data) };
+                newData.id = quiz.id;
+                // console.log(newData);
+                resolve(newData);
+              })
+          })
+        });
+        Promise.all(requests)
+          .then(x => {
+            // console.log(x)
+            setQuizzes(x);
+            setLoading(false);
+          });
+      });
   };
 
   const handleCreateQuiz = () => {
@@ -52,7 +68,7 @@ export default function DashBoard () {
   }
 
   const createCard = (quiz) => {
-    return <GameCard quiz={quiz} onDelete={() => deleteQuiz(quiz.id)}/>
+    return <GameCard key={quiz.id} quiz={quiz} onDelete={() => deleteQuiz(quiz.id)}/>
   };
 
   React.useEffect(() => {
