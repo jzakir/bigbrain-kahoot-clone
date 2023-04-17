@@ -21,7 +21,8 @@ export default function DashBoard () {
   const [modalOpen, setModalOpen] = React.useState(false);
   const [newQuizName, setNewQuizName] = React.useState('');
   const [sessionModal, setSessionModal] = React.useState(false);
-  const [activeSessions, setActiveSessions] = React.useState({});
+  // const [activeSessions, setActiveSessions] = React.useState({});
+  const [currSession, setCurrSession] = React.useState('');
 
   const fetchQuizzes = () => {
     axios.get('/admin/quiz', { headers: { Authorization: `Bearer ${authToken}` } })
@@ -52,25 +53,31 @@ export default function DashBoard () {
       .catch(err => console.log(err));
   }
 
-  const fetchActiveSessionId = (quizId) => {
-    axios.get('/admin/quiz', { headers: { Authorization: `Bearer ${authToken}` } })
+  const fetchActiveSessionId = async (quizId, popup) => {
+    return await axios.get('/admin/quiz', { headers: { Authorization: `Bearer ${authToken}` } })
       .then(data => {
         const quizArr = data.data.quizzes;
-        console.log(quizArr);
         for (const quiz of quizArr) {
           if (quiz.id === quizId) {
-            const updatedActiveSessions = activeSessions.quizId = quiz.active;
-            setActiveSessions(updatedActiveSessions);
+            if (quiz.active) {
+              if (popup) {
+                setCurrSession(quiz.active);
+                setSessionModal(true);
+              }
+              return true;
+            } else {
+              return false;
+            }
           }
         }
       })
       .catch(err => console.log(err));
   }
+
   const handleStartSession = (quizId) => {
-    setSessionModal(true);
     axios.post(`/admin/quiz/${quizId}/start`, { path: quizId }, { headers: { Authorization: `Bearer ${authToken}` } })
       .then(data => {
-        fetchActiveSessionId(quizId);
+        fetchActiveSessionId(quizId, true);
       })
       .catch(err => console.log(err));
   }
@@ -96,7 +103,7 @@ export default function DashBoard () {
         </CardContent>
         <CardActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <PrimaryButton onClick={() => { handleStartSession(quiz.id) }}>
-            Start Session
+            Session Start
           </PrimaryButton>
           <Box>
             <Link to={`/edit/${quiz.id}`}>
@@ -179,11 +186,11 @@ export default function DashBoard () {
           </Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', backgroundColor: 'lightGrey', height: '50px', borderRadius: '10px', mt: 2 }}>
               <Box component="div" sx={{ overflow: 'auto', ml: 1 }}>
-              <Typography>Session ID: {}</Typography>
+              <Typography>Session ID: {currSession}</Typography>
               </Box>
             </Box>
           <GradientButton sx={{ alignSelf: 'flex-end', mt: 2 }}>
-            Copy
+            Copy Link
           </GradientButton>
         </Box>
       </PopUpModal>
