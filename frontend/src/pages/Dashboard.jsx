@@ -21,7 +21,6 @@ export default function DashBoard () {
   const [modalOpen, setModalOpen] = React.useState(false);
   const [newQuizName, setNewQuizName] = React.useState('');
   const [sessionModal, setSessionModal] = React.useState(false);
-  // const [activeSessions, setActiveSessions] = React.useState({});
   const [currSession, setCurrSession] = React.useState('');
 
   const fetchQuizzes = () => {
