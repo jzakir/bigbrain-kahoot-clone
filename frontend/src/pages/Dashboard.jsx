@@ -2,17 +2,14 @@ import React from 'react';
 import axios from '../axios';
 import {
   Box, Container, Typography, TextField,
-  Grid, Card, CardMedia, CardContent, CardActions, IconButton,
+  Grid
 } from '@mui/material';
 import PopUpModal from '../components/PopUpModal';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import { Context, useContext } from '../authContext';
 import PrimaryButton from '../components/PrimaryButton';
-import { Link } from 'react-router-dom';
-import { defaultQuizThumbnail } from '../helpers';
 import TitleButton from '../components/TitleButton';
+import GameCard from '../components/GameCard';
 
 export default function DashBoard () {
   const { authToken } = useContext(Context);
@@ -51,36 +48,7 @@ export default function DashBoard () {
   }
 
   const createCard = (quiz) => {
-    return (<Grid item key={quiz.id} xs={12} sm={6} md={4}>
-      <Card
-        sx={{ height: '100%', display: 'flex', flexDirection: 'column', background: 'linear-gradient(315deg, #d9e4f5 0%, #f5e3e6 74%)' }}
-      >
-        <CardMedia
-          component="img"
-          image={quiz.thumbnail || defaultQuizThumbnail}
-          alt="Quiz Thumbnail"
-          sx={{ maxHeight: '200px' }}
-        />
-        <CardContent sx={{ flexGrow: 1 }}>
-          <Typography gutterBottom variant="h5" component="h2">
-            {quiz.name}
-          </Typography>
-          <Typography>
-            TODO: Number Of Questions + Total Time to complete
-          </Typography>
-        </CardContent>
-        <CardActions sx={{ alignSelf: 'flex-end' }}>
-          <Link to={`/edit/${quiz.id}`}>
-            <IconButton size="small">
-              <EditIcon />
-            </IconButton>
-          </Link>
-          <IconButton size="small" onClick={() => { deleteQuiz(quiz.id) }}>
-            <DeleteIcon />
-          </IconButton>
-        </CardActions>
-      </Card>
-    </Grid>);
+    return <GameCard quiz={quiz} onDelete={() => deleteQuiz(quiz.id)}/>
   };
 
   React.useEffect(() => {
