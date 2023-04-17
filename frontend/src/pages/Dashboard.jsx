@@ -10,6 +10,7 @@ import { Context, useContext } from '../authContext';
 import PrimaryButton from '../components/PrimaryButton';
 import TitleButton from '../components/TitleButton';
 import GameCard from '../components/GameCard';
+import Loading from '../layouts/Loading';
 
 export default function DashBoard () {
   const { authToken } = useContext(Context);
@@ -17,10 +18,13 @@ export default function DashBoard () {
   const [allQuizzes, setQuizzes] = React.useState([]);
   const [modalOpen, setModalOpen] = React.useState(false);
   const [newQuizName, setNewQuizName] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
 
   const fetchQuizzes = () => {
+    setLoading(true);
     axios.get('/admin/quiz', { headers: { Authorization: `Bearer ${authToken}` } })
       .then(data => setQuizzes(data.data.quizzes))
+      .then(() => setLoading(false))
       .catch(err => console.log(err));
   };
 
@@ -61,7 +65,7 @@ export default function DashBoard () {
         <TitleButton title="Dashboard" button buttonText="Create New Quiz" onButtonClick={() => setModalOpen(true)}/>
         <Container maxWidth="lg" sx={{ pb: 6 }}>
           <Grid container spacing={4}>
-            {allQuizzes.map(createCard)}
+            {loading ? <Loading/> : allQuizzes.map(createCard)}
           </Grid>
         </Container>
       </main>
