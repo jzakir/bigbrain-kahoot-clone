@@ -10,7 +10,7 @@ const StyledButton = styled(Button)({
   background: 'linear-gradient(315deg, #00b712 0%, #5aff15 74%)',
   '&:hover': {
     backgroundColor: '#2E3137',
-    cursor: 'auto'
+    cursor: 'auto',
   }
 });
 

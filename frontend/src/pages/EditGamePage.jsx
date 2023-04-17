@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from '../axios';
-import { useNavigate, useParams, Outlet } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   Box, Container, Typography, Grid
 } from '@mui/material';
@@ -96,7 +96,6 @@ export default function EditGamePage () {
   return (
     <>
       <main>
-        <Outlet/>
         <TitleButton title="Edit Game"/>
           <Container maxWidth="lg" sx={{ pb: 6 }}>
             {loading ? <Loading/> : createGameCard(game)}
