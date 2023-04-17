@@ -5,6 +5,7 @@ import RegisterPage from './pages/RegisterPage';
 import LoginPage from './pages/LoginPage';
 import DashBoard from './pages/Dashboard';
 import EditGamePage from './pages/EditGamePage';
+import EditQuestionPage from './pages/EditQuestionPage';
 import { Context } from './authContext';
 import LoginRegisterLayout from './layouts/LoginRegisterLayout';
 import PrivateRoute from './layouts/PrivateRoute';
@@ -40,7 +41,10 @@ function App () {
             />
           </Route>
           <Route path="edit" element={<SiteLayout nav={<NavBar/>}/>}>
-              <Route path=":gameId" element={<PrivateRoute><EditGamePage/></PrivateRoute>}/>
+              <Route path=":gameId">
+                <Route index element={<PrivateRoute><EditGamePage/></PrivateRoute>}/>
+                <Route path=":questionId" element={<PrivateRoute><EditQuestionPage/></PrivateRoute>}/>
+              </Route>
           </Route>
         </Routes>
       </BrowserRouter>

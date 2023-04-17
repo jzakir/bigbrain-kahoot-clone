@@ -1,19 +1,20 @@
 import React from 'react';
 import axios from '../axios';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
-  Box, Container, Typography, Input,
-  Grid, Card, CardMedia, CardContent, CardActions, CircularProgress
+  Box, Container, Typography, Grid
 } from '@mui/material';
-import SaveIcon from '@mui/icons-material/Save';
-import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
-import FileDownloadDoneIcon from '@mui/icons-material/FileDownloadDone';
 import DoneIcon from '@mui/icons-material/Done';
 import PrimaryButton from '../components/PrimaryButton';
-import GradientButton from '../components/GradientButton';
 import PopUpModal from '../components/PopUpModal';
 import { Context, useContext } from '../authContext';
-import { defaultQuizThumbnail, fileToDataUrl } from '../helpers';
+import { fileToDataUrl } from '../helpers';
+import Loading from '../layouts/Loading';
+import EmptyMessage from '../components/EmptyMessage';
+import TitleButton from '../components/TitleButton';
+import QuestionCard from '../components/QuestionCard';
+import GameDetailsCard from '../components/GameDetailsCard';
+import BackButton from '../components/BackButton';
 
 export default function EditGamePage () {
   const navigate = useNavigate();
@@ -26,69 +27,41 @@ export default function EditGamePage () {
   const [uploadedFile, setUploadedFile] = React.useState(null);
   const [newQuizName, setNewQuizName] = React.useState('');
 
-  const handleSaveMetadata = async () => {
+  const saveMetadata = async () => {
+    console.log(game.questions);
     axios.put(`/admin/quiz/${params.gameId}`,
       {
         name: newQuizName,
-        ...(uploadedFile) && { thumbnail: await fileToDataUrl(uploadedFile) }
+        ...(uploadedFile) && {
+          thumbnail: await fileToDataUrl(uploadedFile),
+        },
+        questions: game.questions
       }, { headers: { Authorization: `Bearer ${authToken}` } })
       .then(() => {
-        setChangesSavedModal(true);
         fetchGameDetails();
       })
       .catch(err => console.error(err));
   }
 
   const createGameCard = (game) => {
-    return (<Card
-      sx={{ maxWidth: '1200px', display: 'flex', flexDirection: 'column', background: 'linear-gradient(147deg, #c3cbdc 0%, #edf1f4 74%)' }}
-    >
-      <CardMedia
-        component="img"
-        image={game.thumbnail || defaultQuizThumbnail}
-        alt="Quiz Thumbnail"
-      />
-      <CardContent sx={{ flexGrow: 1 }}>
-        <Typography gutterBottom variant="h5" component="h2">
-        <Input
-          variant="outlined"
-          name="gameName"
-          type="text"
-          placeholder="Game Title"
-          defaultValue={game.name}
-          sx={{ fontSize: '1.5em' }}
-          onChange={e => setNewQuizName(e.target.value)}
-        />
-        </Typography>
-        <Typography>
-          Created on {new Date(game.createdAt).toDateString()} by {game.owner}
-        </Typography>
-        <div style={ { display: 'flex', alignItems: 'center', gap: '5px' } }>
-          <Typography>
-            Update Image:
-          </Typography>
-          <PrimaryButton variant="contained" component="label" sx={ { ml: 1 } }>
-            Upload
-            <InsertPhotoIcon sx={{ pl: 0.5 }}/>
-            <input hidden accept="image/*" type="file" onChange={e => setUploadedFile(e.target.files[0])} />
-          </PrimaryButton>
-          {uploadedFile && <><Typography>{uploadedFile.name}</Typography><FileDownloadDoneIcon sx={{ color: 'lime' }}/></>}
-        </div>
-      </CardContent>
-      <CardActions sx={{ alignSelf: 'flex-end' }}>
-      <PrimaryButton sx={{ height: '50%', alignSelf: 'center' }} onClick={handleSaveMetadata}>Save Quiz Details<SaveIcon sx={{ pl: 0.5 }}/></PrimaryButton>
-      </CardActions>
-    </Card>);
+    return (<GameDetailsCard
+      game={game}
+      uploadedFile={uploadedFile}
+      setUploadedFile={setUploadedFile}
+      setNewQuizName={setNewQuizName}
+      onSave={async () => { await saveMetadata(); setChangesSavedModal(true); }}/>)
   }
+
+  const createQuestionCard = (question) => {
+    return <QuestionCard question={question} onDelete={() => { deleteQuestion(question.id); saveMetadata(); }}/>
+  };
 
   const fetchGameDetails = () => {
     setLoading(true);
     axios.get(`/admin/quiz/${params.gameId}`, { headers: { Authorization: `Bearer ${authToken}` } })
       .then(response => {
-        console.log(response.data)
         setGame(response.data);
         setNewQuizName(response.data.name);
-        // setQuestions(response.data.questions) here for the question cards
         setLoading(false);
       })
       .catch(err => alert(err))
@@ -96,36 +69,44 @@ export default function EditGamePage () {
 
   React.useEffect(() => fetchGameDetails(), []);
 
+  const createNewQuestion = () => {
+    const questionIds = game.questions.length ? game.questions.map(x => x.id) : [0];
+    const newId = Math.max(...questionIds) + 1;
+    game.questions.push({
+      id: newId,
+      type: 'single',
+      questionString: 'New Question',
+      selections: [
+        { answer: 'Option A', answerId: 0 },
+        { answer: 'Option B', answerId: 1 },
+        { answer: 'Option C', answerId: 2 },
+        { answer: 'Option D', answerId: 3 },
+      ],
+      correctAnswerIds: [0],
+      points: 10,
+      timeLimit: 20,
+    })
+    saveMetadata();
+  }
+
+  const deleteQuestion = (questionId) => {
+    game.questions = game.questions.filter(q => q.id !== questionId);
+  }
+
   return (
     <>
       <main>
-        <Box
-          sx={{
-            pt: 6
-          }}
-        >
-          <Container sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography
-              component="h1"
-              variant="h2"
-              align="left"
-              color="background.paper"
-              gutterBottom
-              style={{ textShadow: '2px 3px 5px rgba(0,0,0,0.5)' }}
-            >
-              Edit Game
-            </Typography>
-          </Container>
-
+        <TitleButton title="Edit Game"/>
           <Container maxWidth="lg" sx={{ pb: 6 }}>
-            {loading ? <CircularProgress/> : createGameCard(game)}
+            {loading ? <Loading/> : createGameCard(game)}
           </Container>
-        </Box>
+        <TitleButton title={'Questions'} button buttonText={'Create New Question'} onButtonClick={createNewQuestion}/>
         <Container maxWidth="lg" sx={{ pb: 6 }}>
           <Grid container spacing={4}>
+            {loading ? <Loading/> : (game.questions.length ? game.questions.map(createQuestionCard) : <EmptyMessage>No Questions. Try create some!</EmptyMessage>)}
           </Grid>
-          <GradientButton sx={{ height: '50%', alignSelf: 'center' }} onClick={() => navigate('/dashboard')}>Save Changes<SaveIcon sx={{ pl: 0.5 }}/></GradientButton>
         </Container>
+        <BackButton link="/dashboard" buttonText="Back to Dashboard" navigate={navigate}/>
       </main>
       <PopUpModal
         open={changesSavedModal}

@@ -2,17 +2,16 @@ import React from 'react';
 import axios from '../axios';
 import {
   Box, Container, Typography, TextField,
-  Grid, Card, CardMedia, CardContent, CardActions, IconButton,
+  Grid
 } from '@mui/material';
 import PopUpModal from '../components/PopUpModal';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import { Context, useContext } from '../authContext';
 import PrimaryButton from '../components/PrimaryButton';
+import TitleButton from '../components/TitleButton';
+import GameCard from '../components/GameCard';
+import Loading from '../layouts/Loading';
 import GradientButton from '../components/GradientButton';
-import { Link } from 'react-router-dom';
-import { defaultQuizThumbnail } from '../helpers';
 
 export default function DashBoard () {
   const { authToken } = useContext(Context);
@@ -20,13 +19,32 @@ export default function DashBoard () {
   const [allQuizzes, setQuizzes] = React.useState([]);
   const [modalOpen, setModalOpen] = React.useState(false);
   const [newQuizName, setNewQuizName] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
   const [sessionModal, setSessionModal] = React.useState(false);
   const [currSession, setCurrSession] = React.useState('');
 
   const fetchQuizzes = () => {
+    setLoading(true);
     axios.get('/admin/quiz', { headers: { Authorization: `Bearer ${authToken}` } })
-      .then(data => setQuizzes(data.data.quizzes))
-      .catch(err => console.log(err));
+      .then(data => {
+        const requests = data.data.quizzes.map(quiz => {
+          return new Promise((resolve, reject) => {
+            axios.get(`/admin/quiz/${quiz.id}`, { headers: { Authorization: `Bearer ${authToken}` } })
+              .then(data => {
+                const newData = { ...(data.data) };
+                newData.id = quiz.id;
+                // console.log(newData);
+                resolve(newData);
+              })
+          })
+        });
+        Promise.all(requests)
+          .then(x => {
+            // console.log(x)
+            setQuizzes(x);
+            setLoading(false);
+          });
+      });
   };
 
   const handleCreateQuiz = () => {
@@ -82,41 +100,12 @@ export default function DashBoard () {
   }
 
   const createCard = (quiz) => {
-    return (<Grid item key={quiz.id} xs={12} sm={6} md={4}>
-      <Card
-        sx={{ height: '100%', display: 'flex', flexDirection: 'column', background: 'linear-gradient(315deg, #d9e4f5 0%, #f5e3e6 74%)' }}
-      >
-        <CardMedia
-          component="img"
-          image={quiz.thumbnail || defaultQuizThumbnail}
-          alt="Quiz Thumbnail"
-          sx={{ maxHeight: '200px' }}
-        />
-        <CardContent sx={{ flexGrow: 1 }}>
-          <Typography gutterBottom variant="h5" component="h2">
-            {quiz.name}
-          </Typography>
-          <Typography>
-            TODO: Number Of Questions + Total Time to complete
-          </Typography>
-        </CardContent>
-        <CardActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <PrimaryButton onClick={() => { handleStartSession(quiz.id) }}>
-            Session Start
-          </PrimaryButton>
-          <Box>
-            <Link to={`/edit/${quiz.id}`}>
-              <IconButton size="small">
-                <EditIcon />
-              </IconButton>
-            </Link>
-            <IconButton size="small" onClick={() => { deleteQuiz(quiz.id) }}>
-              <DeleteIcon />
-            </IconButton>
-          </Box>
-        </CardActions>
-      </Card>
-    </Grid>);
+    return <GameCard
+      key={quiz.id}
+      quiz={quiz}
+      onStart={() => handleStartSession(quiz.id)}
+      onDelete={() => deleteQuiz(quiz.id)}
+    />
   };
 
   React.useEffect(() => {
@@ -126,28 +115,10 @@ export default function DashBoard () {
   return (
     <>
       <main>
-        <Box
-          sx={{
-            pt: 6
-          }}
-        >
-          <Container sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography
-              component="h1"
-              variant="h2"
-              align="left"
-              color="background.paper"
-              gutterBottom
-              style={{ textShadow: '2px 3px 5px rgba(0,0,0,0.5)' }}
-            >
-              Dashboard
-            </Typography>
-            <GradientButton sx={{ height: '50%', alignSelf: 'center' }} onClick={() => setModalOpen(true)}>Create New Quiz<AddBoxIcon sx={{ pl: 0.5 }}/></GradientButton>
-          </Container>
-        </Box>
+        <TitleButton title="Dashboard" button buttonText="Create New Quiz" onButtonClick={() => setModalOpen(true)}/>
         <Container maxWidth="lg" sx={{ pb: 6 }}>
           <Grid container spacing={4}>
-            {allQuizzes.map(createCard)}
+            {loading ? <Loading/> : allQuizzes.map(createCard)}
           </Grid>
         </Container>
       </main>

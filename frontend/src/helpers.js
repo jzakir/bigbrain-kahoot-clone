@@ -1,4 +1,5 @@
 export const defaultQuizThumbnail = 'https://kahoot.com/files/2020/03/Schools-library-GettingStarted-570x320.png';
+export const defaultQuestionThumbnail = 'https://media.istockphoto.com/id/1455070729/photo/white-sticky-note-with-question-mark-and-red-push-pin-on-blue-cardboard.jpg?b=1&s=170667a&w=0&k=20&c=B7j0CpTjbD-t3lWoC61UPu-4Jq9ZqEdVEHMSvPlSVt0=';
 
 export function fileToDataUrl (file) {
   const validFileTypes = ['image/jpeg', 'image/png', 'image/jpg']
