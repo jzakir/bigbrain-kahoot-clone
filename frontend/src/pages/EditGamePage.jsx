@@ -10,7 +10,7 @@ import PopUpModal from '../components/PopUpModal';
 import { Context, useContext } from '../authContext';
 import { fileToDataUrl } from '../helpers';
 import Loading from '../layouts/Loading';
-import NoQuestionMessage from '../components/NoQuestionMessage';
+import EmptyMessage from '../components/EmptyMessage';
 import TitleButton from '../components/TitleButton';
 import QuestionCard from '../components/QuestionCard';
 import GameDetailsCard from '../components/GameDetailsCard';
@@ -103,7 +103,7 @@ export default function EditGamePage () {
         <TitleButton title={'Questions'} button buttonText={'Create New Question'} onButtonClick={createNewQuestion}/>
         <Container maxWidth="lg" sx={{ pb: 6 }}>
           <Grid container spacing={4}>
-            {loading ? <Loading/> : (game.questions.length ? game.questions.map(createQuestionCard) : <NoQuestionMessage/>)}
+            {loading ? <Loading/> : (game.questions.length ? game.questions.map(createQuestionCard) : <EmptyMessage>No Questions. Try create some!</EmptyMessage>)}
           </Grid>
         </Container>
         <BackButton link="/dashboard" buttonText="Back to Dashboard" navigate={navigate}/>
