@@ -10,9 +10,9 @@ import EditIcon from '@mui/icons-material/Edit';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import { Context, useContext } from '../authContext';
 import PrimaryButton from '../components/PrimaryButton';
-import GradientButton from '../components/GradientButton';
 import { Link } from 'react-router-dom';
 import { defaultQuizThumbnail } from '../helpers';
+import TitleButton from '../components/TitleButton';
 
 export default function DashBoard () {
   const { authToken } = useContext(Context);
@@ -90,25 +90,7 @@ export default function DashBoard () {
   return (
     <>
       <main>
-        <Box
-          sx={{
-            pt: 6
-          }}
-        >
-          <Container sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography
-              component="h1"
-              variant="h2"
-              align="left"
-              color="background.paper"
-              gutterBottom
-              style={{ textShadow: '2px 3px 5px rgba(0,0,0,0.5)' }}
-            >
-              Dashboard
-            </Typography>
-            <GradientButton sx={{ height: '50%', alignSelf: 'center' }} onClick={() => setModalOpen(true)}>Create New Quiz<AddBoxIcon sx={{ pl: 0.5 }}/></GradientButton>
-          </Container>
-        </Box>
+        <TitleButton title="Dashboard" button buttonText="Create New Quiz" onButtonClick={() => setModalOpen(true)}/>
         <Container maxWidth="lg" sx={{ pb: 6 }}>
           <Grid container spacing={4}>
             {allQuizzes.map(createCard)}

@@ -1,9 +1,9 @@
 import React from 'react';
 import axios from '../axios';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import {
   Box, Container, Typography, Input,
-  Grid, Card, CardMedia, CardContent, CardActions
+  Grid, Card, CardMedia, CardContent, CardActions, IconButton
 } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
@@ -11,10 +11,15 @@ import FileDownloadDoneIcon from '@mui/icons-material/FileDownloadDone';
 import DoneIcon from '@mui/icons-material/Done';
 import PrimaryButton from '../components/PrimaryButton';
 import GradientButton from '../components/GradientButton';
+import GreenButton from '../components/GreenButton';
 import PopUpModal from '../components/PopUpModal';
 import { Context, useContext } from '../authContext';
-import { defaultQuizThumbnail, fileToDataUrl } from '../helpers';
+import { defaultQuizThumbnail, defaultQuestionThumbnail, fileToDataUrl } from '../helpers';
 import Loading from '../layouts/Loading';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import NoQuestionMessage from '../components/NoQuestionMessage';
+import TitleButton from '../components/TitleButton';
 
 export default function EditGamePage () {
   const navigate = useNavigate();
@@ -27,14 +32,17 @@ export default function EditGamePage () {
   const [uploadedFile, setUploadedFile] = React.useState(null);
   const [newQuizName, setNewQuizName] = React.useState('');
 
-  const handleSaveMetadata = async () => {
+  const saveMetadata = async () => {
+    console.log(game.questions);
     axios.put(`/admin/quiz/${params.gameId}`,
       {
         name: newQuizName,
-        ...(uploadedFile) && { thumbnail: await fileToDataUrl(uploadedFile) }
+        ...(uploadedFile) && {
+          thumbnail: await fileToDataUrl(uploadedFile),
+        },
+        questions: game.questions
       }, { headers: { Authorization: `Bearer ${authToken}` } })
       .then(() => {
-        setChangesSavedModal(true);
         fetchGameDetails();
       })
       .catch(err => console.error(err));
@@ -77,19 +85,55 @@ export default function EditGamePage () {
         </div>
       </CardContent>
       <CardActions sx={{ alignSelf: 'flex-end' }}>
-      <PrimaryButton sx={{ height: '50%', alignSelf: 'center' }} onClick={handleSaveMetadata}>Save Quiz Details<SaveIcon sx={{ pl: 0.5 }}/></PrimaryButton>
+      <PrimaryButton sx={{ height: '50%', alignSelf: 'center' }} onClick={async () => { await saveMetadata(); setChangesSavedModal(true); }}>Save Quiz Details<SaveIcon sx={{ pl: 0.5 }}/></PrimaryButton>
       </CardActions>
     </Card>);
   }
+
+  const createQuestionCard = (question) => {
+    console.log(question);
+    return (<Grid item key={question.id} xs={12} sm={6} md={4}>
+      <Card
+        sx={{ height: '100%', display: 'flex', flexDirection: 'column', background: 'linear-gradient(315deg, #d9e4f5 0%, #f5e3e6 74%)' }}
+      >
+        <CardMedia
+          component="img"
+          image={question.url || defaultQuestionThumbnail}
+          alt="Quiz Thumbnail"
+          sx={{ maxHeight: '200px' }}
+        />
+        <CardContent sx={{ flexGrow: 1 }}>
+          <Typography gutterBottom variant="h6" component="h2">
+            {question.questionString}
+          </Typography>
+            <Grid sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+              {question.selections.map(x =>
+                question.correctAnswerIds.includes(x.answerId)
+                  ? (<GreenButton key={x.answerId}>{x.answer}</GreenButton>)
+                  : (<PrimaryButton sx={{ cursor: 'auto' }} key={x.answerId}>{x.answer}</PrimaryButton>)
+              )}
+            </Grid>
+        </CardContent>
+        <CardActions sx={{ alignSelf: 'flex-end' }}>
+          <Link to={`${question.id}`}>
+            <IconButton size="small">
+              <EditIcon />
+            </IconButton>
+          </Link>
+          <IconButton size="small" onClick={() => { deleteQuestion(question.id); saveMetadata(); }}>
+            <DeleteIcon />
+          </IconButton>
+        </CardActions>
+      </Card>
+    </Grid>);
+  };
 
   const fetchGameDetails = () => {
     setLoading(true);
     axios.get(`/admin/quiz/${params.gameId}`, { headers: { Authorization: `Bearer ${authToken}` } })
       .then(response => {
-        console.log(response.data)
         setGame(response.data);
         setNewQuizName(response.data.name);
-        // setQuestions(response.data.questions) here for the question cards
         setLoading(false);
       })
       .catch(err => alert(err))
@@ -97,35 +141,43 @@ export default function EditGamePage () {
 
   React.useEffect(() => fetchGameDetails(), []);
 
+  const createNewQuestion = () => {
+    const questionIds = game.questions.length ? game.questions.map(x => x.id) : [0];
+    const newId = Math.max(...questionIds) + 1;
+    game.questions.push({
+      id: newId,
+      type: 'single',
+      questionString: 'New Question',
+      selections: [
+        { answer: 'Option A', answerId: 0 },
+        { answer: 'Option B', answerId: 1 },
+        { answer: 'Option C', answerId: 2 },
+        { answer: 'Option D', answerId: 3 },
+      ],
+      correctAnswerIds: [0],
+      points: 10,
+      timeLimit: 20,
+    })
+    saveMetadata();
+  }
+
+  const deleteQuestion = (questionId) => {
+    game.questions = game.questions.filter(q => q.id !== questionId);
+  }
+
   return (
     <>
       <main>
-        <Box
-          sx={{
-            pt: 6
-          }}
-        >
-          <Container sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography
-              component="h1"
-              variant="h2"
-              align="left"
-              color="background.paper"
-              gutterBottom
-              style={{ textShadow: '2px 3px 5px rgba(0,0,0,0.5)' }}
-            >
-              Edit Game
-            </Typography>
-          </Container>
-
+        <TitleButton title="Edit Game"/>
           <Container maxWidth="lg" sx={{ pb: 6 }}>
             {loading ? <Loading/> : createGameCard(game)}
           </Container>
-        </Box>
+        <TitleButton title={'Questions'} button buttonText={'Create New Question'} onButtonClick={createNewQuestion}/>
         <Container maxWidth="lg" sx={{ pb: 6 }}>
           <Grid container spacing={4}>
+            {loading ? <Loading/> : (game.questions.length ? game.questions.map(createQuestionCard) : <NoQuestionMessage/>)}
           </Grid>
-          <GradientButton sx={{ height: '50%', alignSelf: 'center' }} onClick={() => navigate('/dashboard')}>Save Changes<SaveIcon sx={{ pl: 0.5 }}/></GradientButton>
+          <GradientButton sx={{ height: '50%', mt: 4 }} onClick={() => navigate('/dashboard')}>Save Changes<SaveIcon sx={{ pl: 0.5 }}/></GradientButton>
         </Container>
       </main>
       <PopUpModal
