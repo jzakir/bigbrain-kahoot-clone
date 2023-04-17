@@ -1,9 +1,10 @@
 import React from 'react';
-import { Grid, Typography, CardContent, CardActions, IconButton, Card, CardMedia } from '@mui/material';
+import { Grid, Typography, CardContent, CardActions, IconButton, Card, CardMedia, Box } from '@mui/material';
 import { Link } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { defaultQuizThumbnail } from '../helpers';
+import PrimaryButton from './PrimaryButton';
 
 const secondsToString = (seconds) => {
   if (seconds < 60) {
@@ -37,15 +38,20 @@ export default function GameCard (props) {
             .reduce((sum, x) => sum + x, 0))}`}
         </Typography>
       </CardContent>
-      <CardActions sx={{ alignSelf: 'flex-end' }}>
-        <Link to={`/edit/${quiz.id}`}>
-          <IconButton size="small">
-            <EditIcon />
+      <CardActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <PrimaryButton onClick={ props.onStart }>
+          Session Start
+        </PrimaryButton>
+        <Box>
+          <Link to={`/edit/${quiz.id}`}>
+            <IconButton size="small">
+              <EditIcon />
+            </IconButton>
+          </Link>
+          <IconButton size="small" onClick={props.onDelete}>
+            <DeleteIcon />
           </IconButton>
-        </Link>
-        <IconButton size="small" onClick={props.onDelete}>
-          <DeleteIcon />
-        </IconButton>
+        </Box>
       </CardActions>
     </Card>
   </Grid>);

@@ -85,10 +85,10 @@ export default function EditQuestionPage () {
     if (checked) {
       console.log('check = true')
       if (!updatedQuestion.correctAnswerIds.includes(answerId)) {
-        if (updatedQuestion.type === 'single' && updatedQuestion.correctAnswerIds.length) {
-          alert('Single type cannot have more than one correct answer');
-          return;
-        }
+        // if (updatedQuestion.type === 'single' && updatedQuestion.correctAnswerIds.length) {
+        //   alert('Single type cannot have more than one correct answer');
+        //   return;
+        // }
         updatedQuestion.correctAnswerIds.push(answerId);
       }
     } else {
@@ -215,7 +215,6 @@ export default function EditQuestionPage () {
 
   return (
     <>
-      <h1>Editing {params.questionId} of game {params.gameId}</h1>
       <main>
         <TitleButton title="Edit Question"/>
         <Container maxWidth="lg" sx={{ pb: 6 }}>
