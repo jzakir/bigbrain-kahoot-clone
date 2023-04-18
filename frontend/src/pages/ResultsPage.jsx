@@ -14,7 +14,7 @@ export default function ResultsPage () {
   const [quizName, setQuizName] = React.useState('');
   const [quizEnd, setQuizEnd] = React.useState(false);
   const [currPos, setCurrPos] = React.useState(-1);
-
+  const [questions, setQuestions] = React.useState([]);
   console.log(loading);
   const handleStop = () => {
     axios.post(`/admin/quiz/${params.quizId}/end`, {}, { headers: { Authorization: `Bearer ${authToken}` } })
@@ -42,12 +42,11 @@ export default function ResultsPage () {
     setLoading(false);
   }
 
-  console.log(quizEnd);
-
   const checkQuizStatus = () => {
     axios.get(`/admin/session/${params.sessionId}/status`, { headers: { Authorization: `Bearer ${authToken}` } })
       .then(data => {
         const result = data.data.results;
+        setQuestions(result.questions);
         setCurrPos(result.position);
         if (!result.active) {
           setQuizEnd(true);
@@ -70,6 +69,7 @@ export default function ResultsPage () {
             : <QuizAdvance
             quizName={quizName}
             currPos={currPos}
+            questions={questions}
             handleAdvance={handleAdvance}
             handleStop={handleStop}
           ></QuizAdvance>}
