@@ -3,15 +3,15 @@ import TitleButton from '../components/TitleButton';
 import BackButton from '../components/BackButton';
 import { useNavigate, useParams } from 'react-router-dom';
 import Loading from '../layouts/Loading';
-// import EmptyMessage from '../components/EmptyMessage';
 import { Context, useContext } from '../authContext';
-import { defaultQuestionThumbnail } from '../helpers';
+import { defaultQuestionThumbnail, fileToDataUrl } from '../helpers';
 import {
   Container, Typography, CardContent, CardActions, Card, CardMedia, Input,
   FormControl, FormControlLabel, Radio, FormLabel, RadioGroup, TextField, InputAdornment
 } from '@mui/material';
 import PrimaryButton from '../components/PrimaryButton';
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
+import FileDownloadDoneIcon from '@mui/icons-material/FileDownloadDone';
 
 import axios from '../axios';
 import AnswerCard from '../components/AnswerCard';
@@ -22,6 +22,7 @@ export default function EditQuestionPage () {
   const navigate = useNavigate();
   const { authToken } = useContext(Context);
   const [loading, setLoading] = React.useState(true);
+  const [isFileUploaded, setFileUploaded] = React.useState('');
   const [questions, setQuestions] = React.useState([]);
   const [question, setQuestion] = React.useState(null);
   const [answers, setAnswers] = React.useState([]);
@@ -45,27 +46,71 @@ export default function EditQuestionPage () {
       .catch(err => alert(err));
   }
 
+  const saveChanges = () => {
+    const savedQuestions = [...questions];
+    console.log(savedQuestions);
+    savedQuestions
+    // for (let q of savedQuestions) {
+    //   if (q.id === question.id) {
+    //     q = { ...question };
+    //     q.selections = [...answers];
+    //     console.log(q);
+    //   }
+    // }
+      .console.log('Saving With this:');
+    console.log(savedQuestions);
+    // console.log(question);
+    // console.log(answers);
+    // axios.put(`/admin/quiz/${params.gameId}`,
+    //   {
+    //     questions: game.questions
+    //   }, { headers: { Authorization: `Bearer ${authToken}` } })
+    //   .then(() => {
+    //     fetchGameDetails();
+    //   })
+    //   .catch(err => console.error(err));
+  }
+
   React.useEffect(() => fetchGameDetails(), []);
 
-  console.log(questions);
-  console.log(question);
+  // console.log(questions);
+  // console.log(question);
   // console.log(answers);
 
-  const handleLimitChange = (e) => {
+  const handleLimitChange = (value) => {
     const newDetails = { ...question };
-    newDetails.timeLimit = e.target.value;
+    newDetails.timeLimit = value;
     setQuestion(newDetails);
   }
 
-  const handleQuestionChange = (e) => {
+  const handleQuestionChange = (value) => {
     const newDetails = { ...question };
-    newDetails.questionString = e.target.value;
+    newDetails.questionString = value;
     setQuestion(newDetails);
   }
 
-  const handlePointsChange = (e) => {
+  const handlePointsChange = (value) => {
     const newDetails = { ...question };
-    newDetails.points = e.target.value;
+    newDetails.points = value;
+    setQuestion(newDetails);
+  }
+
+  const handleUrlChange = (value) => {
+    const newDetails = { ...question };
+    newDetails.url = value;
+    setQuestion(newDetails);
+  }
+
+  const handleImageUploaded = async (value) => {
+    const newDetails = { ...question };
+    newDetails.url = await fileToDataUrl(value);
+    setFileUploaded(value.name);
+    setQuestion(newDetails);
+  }
+
+  const handleTypeChange = (value) => {
+    const newDetails = { ...question };
+    newDetails.type = value;
     setQuestion(newDetails);
   }
 
@@ -83,18 +128,19 @@ export default function EditQuestionPage () {
   const handleCheck = (answerId, checked) => {
     const updatedQuestion = { ...question };
     if (checked) {
-      console.log('check = true')
       if (!updatedQuestion.correctAnswerIds.includes(answerId)) {
-        // if (updatedQuestion.type === 'single' && updatedQuestion.correctAnswerIds.length) {
-        //   alert('Single type cannot have more than one correct answer');
-        //   return;
-        // }
+        if (updatedQuestion.type === 'single' && updatedQuestion.correctAnswerIds.length) {
+          alert('Single type cannot have more than one correct answer');
+          return;
+        }
         updatedQuestion.correctAnswerIds.push(answerId);
       }
     } else {
-      console.log('check = false')
+      if (updatedQuestion.correctAnswerIds.length <= 1) {
+        alert('Must have at least one correct answer');
+        return;
+      }
       if (updatedQuestion.correctAnswerIds.includes(answerId)) {
-        console.log(updatedQuestion.correctAnswerIds);
         updatedQuestion.correctAnswerIds = updatedQuestion.correctAnswerIds.filter(a => a !== answerId);
       }
       console.log(updatedQuestion.correctAnswerIds);
@@ -147,7 +193,7 @@ export default function EditQuestionPage () {
             defaultValue={question.questionString}
             sx={{ fontSize: '1.5em' }}
             fullWidth
-            onChange={handleQuestionChange}
+            onChange={(e) => handleQuestionChange(e.target.value)}
           />
         </Typography>
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
@@ -158,8 +204,9 @@ export default function EditQuestionPage () {
             <FormLabel>Answer Type</FormLabel>
             <RadioGroup
               row
-              defaultValue="single"
+              value={question.type}
               name="radio-buttons-group"
+              onChange={(e) => handleTypeChange(e.target.value)}
               >
               <FormControlLabel value="single" control={<Radio />} label="Single"/>
               <FormControlLabel value="multiple" control={<Radio />} label="Multiple"/>
@@ -173,14 +220,14 @@ export default function EditQuestionPage () {
               InputProps={{
                 endAdornment: <InputAdornment position="end">seconds</InputAdornment>,
               }}
-              onChange={handleLimitChange}/>
+              onChange={(e) => handleLimitChange(e.target.value)}/>
             <TextField
               type="number"
               label="Points"
               variant="standard"
               defaultValue={question.points}
               sx={{ my: 1 }}
-              onChange={handlePointsChange}/>
+              onChange={(e) => handlePointsChange(e.target.value)}/>
             <TextField
               type="text"
               label="YouTube Video or Image URL"
@@ -189,13 +236,15 @@ export default function EditQuestionPage () {
               sx={{ my: 1 }}
               helperText="Optional"
               placeholder='https://www.youtube.com/watch?v=VIDEO_ID'
-              onChange={handlePointsChange}/>
+              onChange={(e) => handleUrlChange(e.target.value)}/>
             <PrimaryButton variant="contained" component="label" sx={ { ml: 1 } }>
               Upload
             <InsertPhotoIcon sx={{ pl: 0.5 }}/>
-            <input hidden accept="image/*" type="file" />
+            <input hidden accept="image/*" type="file" onChange={(e) => handleImageUploaded(e.target.files[0])}/>
             </PrimaryButton>
-        {/* {props.uploadedFile && <><Typography>{props.uploadedFile.name}</Typography><FileDownloadDoneIcon sx={{ color: 'lime' }}/></>} */}
+            <div style={{ display: 'flex', padding: 10 }}>
+              {isFileUploaded && <><Typography>{isFileUploaded}</Typography><FileDownloadDoneIcon sx={{ color: 'lime' }}/></>}
+            </div>
           </FormControl>
           <Container maxWidth="md" sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', flexWrap: 'wrap' }}>
             {answers.map(a => <AnswerCard
@@ -209,7 +258,7 @@ export default function EditQuestionPage () {
         </div>
       </CardContent>
       <CardActions sx={{ alignSelf: 'flex-end' }}>
-      <PrimaryButton sx={{ height: '50%', alignSelf: 'center' }}>Save Changes</PrimaryButton>
+      <PrimaryButton sx={{ height: '50%', alignSelf: 'center' }} onClick={saveChanges}>Save Changes</PrimaryButton>
       </CardActions>
     </Card>);
   }
