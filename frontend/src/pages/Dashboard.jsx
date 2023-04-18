@@ -107,7 +107,9 @@ export default function DashBoard () {
   const handleStopSession = (quiz) => {
     axios.post(`/admin/quiz/${quiz.id}/end`, {}, { headers: { Authorization: `Bearer ${authToken}` } })
       .then(data => {
-        // fetchActiveSessionId(quizId, true);
+        // Modal to ask to view results
+        // quiz.active contains sessionId
+        // API Call to admin/session/${quiz.active}/results for the info
         fetchQuizzes();
       })
       .catch(err => console.log(err));
