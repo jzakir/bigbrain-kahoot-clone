@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import PrimaryButton from '../components/PrimaryButton';
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
+import SaveIcon from '@mui/icons-material/Save';
 import DoneIcon from '@mui/icons-material/Done';
 import FileDownloadDoneIcon from '@mui/icons-material/FileDownloadDone';
 
@@ -48,6 +49,14 @@ export default function EditQuestionPage () {
       .catch(err => alert(err));
   }
 
+  const checkValidQuestion = (question) => {
+    if (question.type === 'single' && question.correctAnswerIds.length !== 1) {
+      popUp('Single question type must have exactly 1 correct answer');
+      return false;
+    }
+    return true;
+  }
+
   const saveChanges = () => {
     const savedQuestions = [...questions];
     for (const q of savedQuestions) {
@@ -59,16 +68,20 @@ export default function EditQuestionPage () {
         q.url = question.url;
         q.correctAnswerIds = question.correctAnswerIds;
         q.selections = question.selections;
+        if (!checkValidQuestion(q)) {
+          return;
+        }
       }
     }
     axios.put(`/admin/quiz/${params.gameId}`, { questions: savedQuestions }, { headers: { Authorization: `Bearer ${authToken}` } })
       .then(() => {
+        popUp('Changes Saved!');
         fetchGameDetails();
       })
       .catch(err => console.error(err));
   }
 
-  const errorPopUp = (message) => {
+  const popUp = (message) => {
     setErrorMessage(message);
     setPopUp(true);
   }
@@ -137,7 +150,7 @@ export default function EditQuestionPage () {
       }
     } else {
       if (updatedQuestion.correctAnswerIds.length <= 1) {
-        errorPopUp('You must have at least one correct answer.');
+        popUp('You must have at least one correct answer.');
         return;
       }
       if (updatedQuestion.correctAnswerIds.includes(answerId)) {
@@ -153,7 +166,7 @@ export default function EditQuestionPage () {
     const answers = newQuestion.selections;
     if (answers.length >= 6) {
       // Switch to modal
-      errorPopUp('You cannot have more than 6 answers.');
+      popUp('You cannot have more than 6 answers.');
       return;
     }
     const answerIds = answers.length ? answers.map(x => x.answerId) : [0];
@@ -262,7 +275,7 @@ export default function EditQuestionPage () {
         </div>
       </CardContent>
       <CardActions sx={{ alignSelf: 'flex-end' }}>
-      <PrimaryButton sx={{ height: '50%', alignSelf: 'center' }} onClick={saveChanges}>Save Changes</PrimaryButton>
+      <PrimaryButton sx={{ height: '50%', alignSelf: 'center' }} onClick={saveChanges}>Save Changes<SaveIcon sx={{ pl: 0.5 }}/></PrimaryButton>
       </CardActions>
     </Card>);
   }
