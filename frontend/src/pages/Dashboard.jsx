@@ -70,20 +70,15 @@ export default function DashBoard () {
       .catch(err => console.log(err));
   }
 
-  const fetchActiveSessionId = async (quizId, popup) => {
-    return await axios.get('/admin/quiz', { headers: { Authorization: `Bearer ${authToken}` } })
+  const fetchActiveSessionId = (quizId) => {
+    axios.get('/admin/quiz', { headers: { Authorization: `Bearer ${authToken}` } })
       .then(data => {
         const quizArr = data.data.quizzes;
         for (const quiz of quizArr) {
           if (quiz.id === quizId) {
             if (quiz.active) {
-              if (popup) {
-                setCurrSession(quiz.active);
-                setSessionModal(true);
-              }
-              return true;
-            } else {
-              return false;
+              setCurrSession(quiz.active);
+              setSessionModal(true);
             }
           }
         }
@@ -94,7 +89,7 @@ export default function DashBoard () {
   const handleStartSession = (quizId) => {
     axios.post(`/admin/quiz/${quizId}/start`, { path: quizId }, { headers: { Authorization: `Bearer ${authToken}` } })
       .then(data => {
-        fetchActiveSessionId(quizId, true);
+        fetchActiveSessionId(quizId);
       })
       .catch(err => console.log(err));
   }
@@ -104,6 +99,7 @@ export default function DashBoard () {
       key={quiz.id}
       quiz={quiz}
       onStart={() => handleStartSession(quiz.id)}
+      popUpState={sessionModal}
       onDelete={() => deleteQuiz(quiz.id)}
     />
   };
