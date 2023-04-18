@@ -47,9 +47,8 @@ function App () {
               </Route>
           </Route>
           <Route path="results" element={<SiteLayout nav={<NavBar/>}/>}>
-            <Route
-              path=":sessionId"
-              element={<PrivateRoute><ResultsPage/></PrivateRoute>}>
+            <Route path=":quizId">
+              <Route path=":sessionId" element={<PrivateRoute><ResultsPage/></PrivateRoute>}/>
             </Route>
           </Route>
         </Routes>

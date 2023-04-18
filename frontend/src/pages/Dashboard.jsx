@@ -26,6 +26,7 @@ export default function DashBoard () {
   const [stopSessionModal, setStopSessionModal] = React.useState(false);
   const [currSession, setCurrSession] = React.useState('');
   const [currStopSession, setCurrStopSession] = React.useState('');
+  const [currQuizId, setCurrQuizId] = React.useState('');
 
   const fetchQuizzes = () => {
     setLoading(true);
@@ -72,8 +73,8 @@ export default function DashBoard () {
       .catch(err => console.log(err));
   }
 
-  const handleViewResults = (sessionId) => {
-    navigate(`/results/${sessionId}`);
+  const handleViewResults = (quizId, sessionId) => {
+    navigate(`/results/${quizId}/${sessionId}`);
   }
 
   const handleStartSession = (quizId) => {
@@ -81,6 +82,7 @@ export default function DashBoard () {
       .then(data => {
         axios.get(`/admin/quiz/${quizId}`, { headers: { Authorization: `Bearer ${authToken}` } })
           .then(data => {
+            setCurrQuizId(quizId);
             setCurrSession(data.data.active);
             setSessionModal(true)
           })
@@ -91,6 +93,7 @@ export default function DashBoard () {
   const handleStopSession = (quizId, sessionId) => {
     axios.post(`/admin/quiz/${quizId}/end`, {}, { headers: { Authorization: `Bearer ${authToken}` } })
       .then(data => {
+        setCurrQuizId(quizId);
         setCurrStopSession(sessionId);
         setStopSessionModal(true);
       })
@@ -161,7 +164,7 @@ export default function DashBoard () {
             <PrimaryButton sx={{ mt: 3 }}>
               Copy Link
             </PrimaryButton>
-            <GradientButton onClick={ () => handleViewResults(currSession) } sx={{ mt: 3 }}>
+            <GradientButton onClick={ () => handleViewResults(currQuizId, currSession) } sx={{ mt: 3 }}>
               Start Game!
             </GradientButton>
           </Box>
@@ -182,7 +185,7 @@ export default function DashBoard () {
             <PrimaryButton onClick={() => setStopSessionModal(false)} sx={{ width: '100px', mt: 3 }}>
               No
             </PrimaryButton>
-            <GradientButton onClick={ () => handleViewResults(currStopSession) } sx={{ width: '100px', mt: 3 }}>
+            <GradientButton onClick={ () => handleViewResults(currQuizId, currStopSession) } sx={{ width: '100px', mt: 3 }}>
               Yes
             </GradientButton>
           </Box>
