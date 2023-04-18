@@ -4,7 +4,9 @@ import { Link } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { defaultQuizThumbnail } from '../helpers';
-import SessionButton from './SessionButton';
+import PrimaryButton from './PrimaryButton';
+import axios from '../axios';
+import { Context, useContext } from '../authContext';
 
 const secondsToString = (seconds) => {
   if (seconds < 60) {
@@ -15,10 +17,30 @@ const secondsToString = (seconds) => {
 
 export default function GameCard (props) {
   const quiz = props.quiz;
-  console.log(quiz);
+  const { authToken } = useContext(Context);
+
+  const [activeSession, setActiveSession] = React.useState('');
+
+  const checkActiveSession = (quizId) => {
+    axios.get(`/admin/quiz/${quizId}`, { headers: { Authorization: `Bearer ${authToken}` } })
+      .then(data => {
+        if (data.data.active) {
+          setActiveSession(data.data.active);
+        }
+      })
+      .catch(err => console.log(err));
+  }
+
+  React.useEffect(() => checkActiveSession(quiz.id), [props.popUpState]);
+
+  const handleStop = () => {
+    props.onStop(quiz.id, activeSession);
+    setActiveSession('');
+  }
+
   return (<Grid item xs={12} sm={6} md={4}>
     <Card
-      sx={{ height: '100%', display: 'flex', flexDirection: 'column', background: 'linear-gradient(315deg, #d9e4f5 0%, #f5e3e6 74%)' }}
+      sx={{ height: '100%', display: 'flex', flexDirection: 'column', background: 'white' }}
     >
       <CardMedia
         component="img"
@@ -39,7 +61,9 @@ export default function GameCard (props) {
         </Typography>
       </CardContent>
       <CardActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <SessionButton started={quiz.active} onClick={ quiz.active ? () => props.onStop(quiz) : () => props.onStart(quiz) }/>
+        <PrimaryButton onClick={ activeSession ? handleStop : props.onStart }>
+          {activeSession ? 'Stop Session' : 'Start Session'}
+        </PrimaryButton>
         <Box>
           <Link to={`/edit/${quiz.id}`}>
             <IconButton size="small">

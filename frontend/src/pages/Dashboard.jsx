@@ -33,14 +33,12 @@ export default function DashBoard () {
               .then(data => {
                 const newData = { ...(data.data) };
                 newData.id = quiz.id;
-                // console.log(newData);
                 resolve(newData);
               })
           })
         });
         Promise.all(requests)
           .then(x => {
-            // console.log(x)
             setQuizzes(x);
             setLoading(false);
           });
@@ -70,47 +68,23 @@ export default function DashBoard () {
       .catch(err => console.log(err));
   }
 
-  // const fetchActiveSessionId = async (quizId, popup) => {
-  //   return await axios.get('/admin/quiz', { headers: { Authorization: `Bearer ${authToken}` } })
-  //     .then(data => {
-  //       const quizArr = data.data.quizzes;
-  //       for (const quiz of quizArr) {
-  //         if (quiz.id === quizId) {
-  //           if (quiz.active) {
-  //             if (popup) {
-  //               setCurrSession(quiz.active);
-  //               setSessionModal(true);
-  //             }
-  //             return true;
-  //           } else {
-  //             return false;
-  //           }
-  //         }
-  //       }
-  //     })
-  //     .catch(err => console.log(err));
-  // }
-
-  const handleStartSession = (quiz) => {
-    axios.post(`/admin/quiz/${quiz.id}/start`, {}, { headers: { Authorization: `Bearer ${authToken}` } })
+  const handleStartSession = (quizId) => {
+    axios.post(`/admin/quiz/${quizId}/start`, {}, { headers: { Authorization: `Bearer ${authToken}` } })
       .then(data => {
-        axios.get(`/admin/quiz/${quiz.id}`, { headers: { Authorization: `Bearer ${authToken}` } })
+        axios.get(`/admin/quiz/${quizId}`, { headers: { Authorization: `Bearer ${authToken}` } })
           .then(data => {
             setCurrSession(data.data.active);
-            setSessionModal(true);
-            fetchQuizzes();
+            setSessionModal(true)
           })
       })
       .catch(err => console.log(err));
   }
 
-  const handleStopSession = (quiz) => {
-    axios.post(`/admin/quiz/${quiz.id}/end`, {}, { headers: { Authorization: `Bearer ${authToken}` } })
+  const handleStopSession = (quizId, sessionId) => {
+    axios.post(`/admin/quiz/${quizId}/end`, {}, { headers: { Authorization: `Bearer ${authToken}` } })
       .then(data => {
         // Modal to ask to view results
-        // quiz.active contains sessionId
-        // API Call to admin/session/${quiz.active}/results for the info
-        fetchQuizzes();
+        // Navigate to /results/sessionid
       })
       .catch(err => console.log(err));
   }
@@ -119,8 +93,9 @@ export default function DashBoard () {
     return <GameCard
       key={quiz.id}
       quiz={quiz}
-      onStart={handleStartSession}
+      onStart={() => handleStartSession(quiz.id)}
       onStop={handleStopSession}
+      popUpState={sessionModal}
       onDelete={() => deleteQuiz(quiz.id)}
     />
   };
