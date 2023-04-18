@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { defaultQuizThumbnail } from '../helpers';
-import PrimaryButton from './PrimaryButton';
+import SessionButton from './SessionButton';
 
 const secondsToString = (seconds) => {
   if (seconds < 60) {
@@ -39,9 +39,7 @@ export default function GameCard (props) {
         </Typography>
       </CardContent>
       <CardActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <PrimaryButton onClick={ props.onStart }>
-          Session Start
-        </PrimaryButton>
+        <SessionButton started={quiz.active} onClick={ quiz.active ? () => props.onStop(quiz) : () => props.onStart(quiz) }/>
         <Box>
           <Link to={`/edit/${quiz.id}`}>
             <IconButton size="small">
