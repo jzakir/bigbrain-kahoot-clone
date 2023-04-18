@@ -11,6 +11,7 @@ import LoginRegisterLayout from './layouts/LoginRegisterLayout';
 import PrivateRoute from './layouts/PrivateRoute';
 import SiteLayout from './layouts/SiteLayout';
 import NavBar from './components/NavBar';
+import ResultsPage from './pages/ResultsPage';
 
 document.title = 'BigBrain!';
 
@@ -32,8 +33,7 @@ function App () {
           </Route>
           <Route element={<SiteLayout nav={<NavBar/>}/>}>
             <Route
-              exact
-              path="dashboard"
+              exact path="dashboard"
               element={
                 <PrivateRoute>
                   <DashBoard/>
@@ -45,6 +45,12 @@ function App () {
                 <Route index element={<PrivateRoute><EditGamePage/></PrivateRoute>}/>
                 <Route path=":questionId" element={<PrivateRoute><EditQuestionPage/></PrivateRoute>}/>
               </Route>
+          </Route>
+          <Route path="results" element={<SiteLayout nav={<NavBar/>}/>}>
+            <Route
+              path=":sessionId"
+              element={<PrivateRoute><ResultsPage/></PrivateRoute>}>
+            </Route>
           </Route>
         </Routes>
       </BrowserRouter>

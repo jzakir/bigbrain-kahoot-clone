@@ -12,8 +12,10 @@ import TitleButton from '../components/TitleButton';
 import GameCard from '../components/GameCard';
 import Loading from '../layouts/Loading';
 import GradientButton from '../components/GradientButton';
+import { useNavigate } from 'react-router-dom';
 
 export default function DashBoard () {
+  const navigate = useNavigate();
   const { authToken } = useContext(Context);
 
   const [allQuizzes, setQuizzes] = React.useState([]);
@@ -21,7 +23,9 @@ export default function DashBoard () {
   const [newQuizName, setNewQuizName] = React.useState('');
   const [loading, setLoading] = React.useState(false);
   const [sessionModal, setSessionModal] = React.useState(false);
+  const [stopSessionModal, setStopSessionModal] = React.useState(false);
   const [currSession, setCurrSession] = React.useState('');
+  const [currStopSession, setCurrStopSession] = React.useState('');
 
   const fetchQuizzes = () => {
     setLoading(true);
@@ -68,6 +72,10 @@ export default function DashBoard () {
       .catch(err => console.log(err));
   }
 
+  const handleViewResults = (sessionId) => {
+    navigate(`/results/${sessionId}`);
+  }
+
   const handleStartSession = (quizId) => {
     axios.post(`/admin/quiz/${quizId}/start`, {}, { headers: { Authorization: `Bearer ${authToken}` } })
       .then(data => {
@@ -83,8 +91,8 @@ export default function DashBoard () {
   const handleStopSession = (quizId, sessionId) => {
     axios.post(`/admin/quiz/${quizId}/end`, {}, { headers: { Authorization: `Bearer ${authToken}` } })
       .then(data => {
-        // Modal to ask to view results
-        // Navigate to /results/sessionid
+        setCurrStopSession(sessionId);
+        setStopSessionModal(true);
       })
       .catch(err => console.log(err));
   }
@@ -100,9 +108,7 @@ export default function DashBoard () {
     />
   };
 
-  React.useEffect(() => {
-    fetchQuizzes();
-  }, []);
+  React.useEffect(() => { fetchQuizzes(); }, []);
 
   return (
     <>
@@ -151,9 +157,35 @@ export default function DashBoard () {
               <Typography>Session ID: {currSession}</Typography>
               </Box>
             </Box>
-          <GradientButton sx={{ alignSelf: 'flex-end', mt: 2 }}>
-            Copy Link
-          </GradientButton>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
+            <PrimaryButton sx={{ mt: 3 }}>
+              Copy Link
+            </PrimaryButton>
+            <GradientButton onClick={ () => handleViewResults(currSession) } sx={{ mt: 3 }}>
+              Start Game!
+            </GradientButton>
+          </Box>
+        </Box>
+      </PopUpModal>
+      <PopUpModal
+        open={stopSessionModal}
+        onClose={() => setStopSessionModal(false)}
+      >
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Typography variant="h5">
+            Session Stopped!
+          </Typography>
+          <Typography variant="h6" align={'center'} sx={{ mt: 3 }}>
+            Would you like to view the results?
+          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
+            <PrimaryButton onClick={() => setStopSessionModal(false)} sx={{ width: '100px', mt: 3 }}>
+              No
+            </PrimaryButton>
+            <GradientButton onClick={ () => handleViewResults(currStopSession) } sx={{ width: '100px', mt: 3 }}>
+              Yes
+            </GradientButton>
+          </Box>
         </Box>
       </PopUpModal>
     </>
