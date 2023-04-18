@@ -7,16 +7,18 @@ import { Context, useContext } from '../authContext';
 import { defaultQuestionThumbnail, fileToDataUrl } from '../helpers';
 import {
   Container, Typography, CardContent, CardActions, Card, CardMedia, Input,
-  FormControl, FormControlLabel, Radio, FormLabel, RadioGroup, TextField, InputAdornment
+  FormControl, FormControlLabel, Radio, FormLabel, RadioGroup, TextField, InputAdornment,
+  Box
 } from '@mui/material';
 import PrimaryButton from '../components/PrimaryButton';
 import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
+import DoneIcon from '@mui/icons-material/Done';
 import FileDownloadDoneIcon from '@mui/icons-material/FileDownloadDone';
 
 import axios from '../axios';
 import AnswerCard from '../components/AnswerCard';
 import AddBoxIcon from '@mui/icons-material/AddBox';
-// import PopUpModal from '../components/PopUpModal';
+import PopUpModal from '../components/PopUpModal';
 
 export default function EditQuestionPage () {
   const navigate = useNavigate();
@@ -25,7 +27,8 @@ export default function EditQuestionPage () {
   const [isFileUploaded, setFileUploaded] = React.useState('');
   const [questions, setQuestions] = React.useState([]);
   const [question, setQuestion] = React.useState(null);
-  const [answers, setAnswers] = React.useState([]);
+  const [errorPopUpMessage, setErrorMessage] = React.useState('');
+  const [openPopUp, setPopUp] = React.useState(false);
   const params = useParams();
 
   const fetchGameDetails = () => {
@@ -38,7 +41,6 @@ export default function EditQuestionPage () {
       .then(questions => questions.forEach(q => {
         // for some reason Array.find() or Array.filter() dont work here
         if (q.id === parseInt(params.questionId)) {
-          setAnswers(q.selections);
           setQuestion(q);
           setLoading(false);
         }
@@ -48,34 +50,30 @@ export default function EditQuestionPage () {
 
   const saveChanges = () => {
     const savedQuestions = [...questions];
-    console.log(savedQuestions);
-    savedQuestions
-    // for (let q of savedQuestions) {
-    //   if (q.id === question.id) {
-    //     q = { ...question };
-    //     q.selections = [...answers];
-    //     console.log(q);
-    //   }
-    // }
-      .console.log('Saving With this:');
-    console.log(savedQuestions);
-    // console.log(question);
-    // console.log(answers);
-    // axios.put(`/admin/quiz/${params.gameId}`,
-    //   {
-    //     questions: game.questions
-    //   }, { headers: { Authorization: `Bearer ${authToken}` } })
-    //   .then(() => {
-    //     fetchGameDetails();
-    //   })
-    //   .catch(err => console.error(err));
+    for (const q of savedQuestions) {
+      if (q.id === question.id) {
+        q.questionString = question.questionString;
+        q.type = question.type;
+        q.points = parseInt(question.points);
+        q.timeLimit = parseInt(question.timeLimit);
+        q.url = question.url;
+        q.correctAnswerIds = question.correctAnswerIds;
+        q.selections = question.selections;
+      }
+    }
+    axios.put(`/admin/quiz/${params.gameId}`, { questions: savedQuestions }, { headers: { Authorization: `Bearer ${authToken}` } })
+      .then(() => {
+        fetchGameDetails();
+      })
+      .catch(err => console.error(err));
+  }
+
+  const errorPopUp = (message) => {
+    setErrorMessage(message);
+    setPopUp(true);
   }
 
   React.useEffect(() => fetchGameDetails(), []);
-
-  // console.log(questions);
-  // console.log(question);
-  // console.log(answers);
 
   const handleLimitChange = (value) => {
     const newDetails = { ...question };
@@ -115,29 +113,31 @@ export default function EditQuestionPage () {
   }
 
   const handleAnswerChange = (answerId, value) => {
-    const newAnswers = [...answers];
+    const newQuestion = { ...question }
+    const newAnswers = newQuestion.selections;
     for (const answer of newAnswers) {
       if (answer.answerId === answerId) {
         answer.answer = value;
       }
     }
-    setAnswers(newAnswers);
+    newQuestion.selections = newAnswers;
+    setQuestion(newQuestion);
   }
 
-  // TODO Clean this up lol
+  // TODO Clean this up
   const handleCheck = (answerId, checked) => {
     const updatedQuestion = { ...question };
     if (checked) {
       if (!updatedQuestion.correctAnswerIds.includes(answerId)) {
-        if (updatedQuestion.type === 'single' && updatedQuestion.correctAnswerIds.length) {
-          alert('Single type cannot have more than one correct answer');
-          return;
+        if (updatedQuestion.type === 'single') {
+          // Clear all selections first
+          updatedQuestion.correctAnswerIds = [];
         }
         updatedQuestion.correctAnswerIds.push(answerId);
       }
     } else {
       if (updatedQuestion.correctAnswerIds.length <= 1) {
-        alert('Must have at least one correct answer');
+        errorPopUp('You must have at least one correct answer.');
         return;
       }
       if (updatedQuestion.correctAnswerIds.includes(answerId)) {
@@ -149,29 +149,33 @@ export default function EditQuestionPage () {
   }
 
   const createNewAnswer = () => {
+    const newQuestion = { ...question };
+    const answers = newQuestion.selections;
     if (answers.length >= 6) {
       // Switch to modal
-      alert('You cannot have more than 6 answers');
+      errorPopUp('You cannot have more than 6 answers.');
       return;
     }
     const answerIds = answers.length ? answers.map(x => x.answerId) : [0];
     const newId = Math.max(...answerIds) + 1;
-    const newAnswers = [...answers];
-    newAnswers.push({
-      answerId: newId,
+    answers.push({
       answer: 'New Answer',
+      answerId: newId,
     });
-    setAnswers(newAnswers);
+    newQuestion.selections = answers;
+    setQuestion(newQuestion);
   }
 
   const deleteAnswer = (answerId) => {
+    const newQuestion = { ...question };
+    const answers = newQuestion.selections;
     if (answers.length <= 2) {
       // Switch to modal
       alert('You cannot have less than 2 answers');
       return;
     }
-    const newAnswers = answers.filter(a => a.answerId !== answerId);
-    setAnswers(newAnswers);
+    newQuestion.selections = answers.filter(a => a.answerId !== answerId);
+    setQuestion(newQuestion);
   }
 
   const createCard = (question) => {
@@ -247,7 +251,7 @@ export default function EditQuestionPage () {
             </div>
           </FormControl>
           <Container maxWidth="md" sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', flexWrap: 'wrap' }}>
-            {answers.map(a => <AnswerCard
+            {question.selections.map(a => <AnswerCard
               answer={a}
               key={a.answerId}
               onCheck={handleCheck}
@@ -273,19 +277,17 @@ export default function EditQuestionPage () {
         <BackButton link={'/edit/' + params.gameId} buttonText="Back to Game" navigate={navigate}/>
       </main>
       {/* <EmptyMessage>Must Have at least one answer, add some!</EmptyMessage> */}
-      {/* <PopUpModal
-        open={changesSavedModal}
-        onClose={() => setChangesSavedModal(false)}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
+      <PopUpModal
+        open={openPopUp}
+        onClose={() => setPopUp(false)}
       >
         <Box sx={{ width: '100%', justifyContent: 'space-between', display: 'flex', pt: 1 }}>
           <Typography variant="h6" component="h2">
-            Changes Saved!
+            {errorPopUpMessage}
           </Typography>
-          <PrimaryButton onClick={() => setChangesSavedModal(false)}>Ok<DoneIcon sx={{ pl: 0.5 }}/></PrimaryButton>
+          <PrimaryButton onClick={() => setPopUp(false)}>OK<DoneIcon sx={{ pl: 0.5 }}/></PrimaryButton>
         </Box>
-      </PopUpModal> */}
+      </PopUpModal>
     </>
   );
 }

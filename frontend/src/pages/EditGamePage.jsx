@@ -52,7 +52,7 @@ export default function EditGamePage () {
   }
 
   const createQuestionCard = (question) => {
-    return <QuestionCard question={question} onDelete={() => { deleteQuestion(question.id); saveMetadata(); }}/>
+    return <QuestionCard key={question.id} question={question} onDelete={() => { deleteQuestion(question.id); saveMetadata(); }}/>
   };
 
   const fetchGameDetails = () => {
