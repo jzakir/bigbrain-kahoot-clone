@@ -1,6 +1,8 @@
-import { Input, IconButton, Checkbox, Card, CardContent, CardActions } from '@mui/material';
+import { TextField, IconButton, Checkbox, Card, CardContent, CardActions } from '@mui/material';
 import React from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 export default function AnswerCard (props) {
   const cardStyle = {
@@ -18,13 +20,14 @@ export default function AnswerCard (props) {
   const answer = props.answer;
   return (<Card sx={cardStyle}>
     <CardContent sx={{ flexGrow: 1 }}>
-      <Input
+      <TextField
+        sx={{ mt: 3 }}
+        size="small"
         variant="outlined"
         type="text"
         placeholder="Answer"
         defaultValue={answer.answer}
         fullWidth
-        size="small"
         onChange={(e) => props.handleAnswerChange(answer.answerId, e.target.value)}
       />
     </CardContent>
@@ -32,7 +35,11 @@ export default function AnswerCard (props) {
       <IconButton size="small" onClick={props.onDelete}>
         <DeleteIcon />
       </IconButton>
-      <Checkbox checked={props.isChecked} onChange={(e) => props.onCheck(answer.answerId, e.target.checked)}/>
+      <Checkbox
+        checked={props.isChecked}
+        onChange={(e) => props.onCheck(answer.answerId, e.target.checked)}
+        icon={<CheckCircleOutlineIcon/>}
+        checkedIcon={<CheckCircleIcon/>}/>
     </CardActions>
   </Card>);
 }

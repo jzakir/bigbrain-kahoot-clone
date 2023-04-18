@@ -28,7 +28,6 @@ export default function EditGamePage () {
   const [newQuizName, setNewQuizName] = React.useState('');
 
   const saveMetadata = async () => {
-    console.log(game.questions);
     axios.put(`/admin/quiz/${params.gameId}`,
       {
         name: newQuizName,
@@ -53,7 +52,7 @@ export default function EditGamePage () {
   }
 
   const createQuestionCard = (question) => {
-    return <QuestionCard question={question} onDelete={() => { deleteQuestion(question.id); saveMetadata(); }}/>
+    return <QuestionCard key={question.id} question={question} onDelete={() => { deleteQuestion(question.id); saveMetadata(); }}/>
   };
 
   const fetchGameDetails = () => {

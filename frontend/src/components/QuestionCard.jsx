@@ -5,17 +5,18 @@ import PrimaryButton from './PrimaryButton';
 import GreenButton from './GreenButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { defaultQuestionThumbnail } from '../helpers';
+import { defaultQuestionThumbnail, embedLink, extractYoutubeId } from '../helpers';
 
 export default function QuestionCard (props) {
   const question = props.question;
+  const videoId = extractYoutubeId(question.url);
   return (<Grid item key={question.id} xs={12} sm={6} md={4}>
     <Card
       sx={{ height: '100%', display: 'flex', flexDirection: 'column', background: 'linear-gradient(315deg, #d9e4f5 0%, #f5e3e6 74%)' }}
     >
       <CardMedia
-        component="img"
-        image={question.url || defaultQuestionThumbnail}
+        component={videoId ? 'iframe' : 'img'}
+        src={videoId ? embedLink(videoId) : (question.url || defaultQuestionThumbnail)}
         alt="Quiz Thumbnail"
         sx={{ maxHeight: '200px' }}
       />
