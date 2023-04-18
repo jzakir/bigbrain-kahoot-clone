@@ -69,12 +69,12 @@ export default function DashBoard () {
   }
 
   const handleStartSession = (quizId) => {
-    axios.post(`/admin/quiz/${quizId}/start`, { path: quizId }, { headers: { Authorization: `Bearer ${authToken}` } })
+    axios.post(`/admin/quiz/${quizId}/start`, {}, { headers: { Authorization: `Bearer ${authToken}` } })
       .then(data => {
         axios.get(`/admin/quiz/${quizId}`, { headers: { Authorization: `Bearer ${authToken}` } })
           .then(data => {
             setCurrSession(data.data.active);
-            setSessionModal(true);
+            setSessionModal(true)
           })
       })
       .catch(err => console.log(err));
@@ -84,8 +84,7 @@ export default function DashBoard () {
     axios.post(`/admin/quiz/${quizId}/end`, {}, { headers: { Authorization: `Bearer ${authToken}` } })
       .then(data => {
         // Modal to ask to view results
-        // quiz.active contains sessionId
-        // API Call to admin/session/${quiz.active}/results for the info
+        // Navigate to /results/sessionid
       })
       .catch(err => console.log(err));
   }
