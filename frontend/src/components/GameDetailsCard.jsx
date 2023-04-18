@@ -24,6 +24,7 @@ export default function GameDetailsCard (props) {
         type="text"
         placeholder="Game Title"
         defaultValue={game.name}
+        fullWidth
         sx={{ fontSize: '1.5em' }}
         onChange={e => props.setNewQuizName(e.target.value)}
       />
