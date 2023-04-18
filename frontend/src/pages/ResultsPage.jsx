@@ -15,8 +15,6 @@ export default function ResultsPage () {
   const [quizEnd, setQuizEnd] = React.useState(false);
   const [currPos, setCurrPos] = React.useState(-1);
 
-  // Make an API call to /admin/session/{sessionid}/status to determine everything about this session.
-  // If it's active, then show advance/stop
   console.log(loading);
   const handleStop = () => {
     axios.post(`/admin/quiz/${params.quizId}/end`, {}, { headers: { Authorization: `Bearer ${authToken}` } })

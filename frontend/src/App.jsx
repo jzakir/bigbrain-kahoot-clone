@@ -7,11 +7,13 @@ import DashBoard from './pages/Dashboard';
 import EditGamePage from './pages/EditGamePage';
 import EditQuestionPage from './pages/EditQuestionPage';
 import { Context } from './authContext';
-import LoginRegisterLayout from './layouts/LoginRegisterLayout';
+import GradientLayout from './layouts/GradientLayout';
 import PrivateRoute from './layouts/PrivateRoute';
 import SiteLayout from './layouts/SiteLayout';
 import NavBar from './components/NavBar';
 import ResultsPage from './pages/ResultsPage';
+import PlayGameHome from './pages/PlayGameHome';
+import PlayGamePage from './pages/PlayGamePage';
 
 document.title = 'BigBrain!';
 
@@ -26,7 +28,7 @@ function App () {
     <Context.Provider value={{ authToken, setAuthToken }}>
       <BrowserRouter>
         <Routes>
-          <Route element={<LoginRegisterLayout/>}>
+          <Route element={<GradientLayout/>}>
             <Route path="/" element={<HomePage/>}/>
             <Route exact path="register" element={<RegisterPage/>}/>
             <Route exact path="login" element={<LoginPage/>}/>
@@ -51,6 +53,10 @@ function App () {
               <Route path=":sessionId" element={<PrivateRoute><ResultsPage/></PrivateRoute>}/>
             </Route>
           </Route>
+           <Route path="play/join" element={<GradientLayout/>}>
+            <Route index element={<PlayGameHome/>}/>
+            <Route path=":sessionId" element={<PlayGamePage/>}/>
+           </Route>
         </Routes>
       </BrowserRouter>
     </Context.Provider>
