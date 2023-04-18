@@ -1,9 +1,7 @@
 import React from 'react';
 import axios from '../axios';
-import {
-  Box, Container, Typography, TextField,
-  Grid
-} from '@mui/material';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { Box, Container, Typography, TextField, Grid } from '@mui/material';
 import PopUpModal from '../components/PopUpModal';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import { Context, useContext } from '../authContext';
@@ -17,7 +15,6 @@ import { useNavigate } from 'react-router-dom';
 export default function DashBoard () {
   const navigate = useNavigate();
   const { authToken } = useContext(Context);
-
   const [allQuizzes, setQuizzes] = React.useState([]);
   const [modalOpen, setModalOpen] = React.useState(false);
   const [newQuizName, setNewQuizName] = React.useState('');
@@ -27,6 +24,7 @@ export default function DashBoard () {
   const [currSession, setCurrSession] = React.useState('');
   const [currStopSession, setCurrStopSession] = React.useState('');
   const [currQuizId, setCurrQuizId] = React.useState('');
+  const resultURL = 'http://localhost:3000/results';
 
   const fetchQuizzes = () => {
     setLoading(true);
@@ -161,9 +159,12 @@ export default function DashBoard () {
               </Box>
             </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
-            <PrimaryButton sx={{ mt: 3 }}>
-              Copy Link
-            </PrimaryButton>
+            <CopyToClipboard text={resultURL + `/${currQuizId}/${currSession}`}
+               onCopy={() => alert('Copied!')}>
+              <PrimaryButton sx={{ mt: 3 }}>
+                Copy Link
+              </PrimaryButton>
+            </CopyToClipboard>
             <GradientButton onClick={ () => handleViewResults(currQuizId, currSession) } sx={{ mt: 3 }}>
               Start Game!
             </GradientButton>
