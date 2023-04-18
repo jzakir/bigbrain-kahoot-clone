@@ -289,7 +289,6 @@ export default function EditQuestionPage () {
         </Container>
         <BackButton link={'/edit/' + params.gameId} buttonText="Back to Game" navigate={navigate}/>
       </main>
-      {/* <EmptyMessage>Must Have at least one answer, add some!</EmptyMessage> */}
       <PopUpModal
         open={openPopUp}
         onClose={() => setPopUp(false)}
