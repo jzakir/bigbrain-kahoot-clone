@@ -9,7 +9,7 @@ const boxStyle = {
   alignItems: 'center',
 };
 
-export default function LoginRegisterLayout () {
+export default function GradientLayout () {
   return (
     <>
       <Container component="div" style={ {
