@@ -183,11 +183,12 @@ export default function EditQuestionPage () {
               onChange={handlePointsChange}/>
             <TextField
               type="text"
-              label="YouTube Video URL"
+              label="YouTube Video or Image URL"
               variant="standard"
-              defaultValue={question.points}
+              defaultValue={question.url || ''}
               sx={{ my: 1 }}
               helperText="Optional"
+              placeholder='https://www.youtube.com/watch?v=VIDEO_ID'
               onChange={handlePointsChange}/>
             <PrimaryButton variant="contained" component="label" sx={ { ml: 1 } }>
               Upload
