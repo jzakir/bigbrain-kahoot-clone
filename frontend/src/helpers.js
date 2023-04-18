@@ -17,3 +17,17 @@ export function fileToDataUrl (file) {
   reader.readAsDataURL(file);
   return dataUrlPromise;
 }
+
+// Regex taken from https://stackoverflow.com/questions/3452546/how-do-i-get-the-youtube-video-id-from-a-url
+export function extractYoutubeId (url) {
+  if (!url) {
+    return false;
+  }
+  const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[7].length === 11) ? match[7] : false;
+}
+
+export function embedLink (videoId) {
+  return `https://www.youtube.com/embed/${videoId}`;
+}

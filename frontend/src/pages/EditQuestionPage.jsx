@@ -4,7 +4,7 @@ import BackButton from '../components/BackButton';
 import { useNavigate, useParams } from 'react-router-dom';
 import Loading from '../layouts/Loading';
 import { Context, useContext } from '../authContext';
-import { defaultQuestionThumbnail, fileToDataUrl } from '../helpers';
+import { defaultQuestionThumbnail, fileToDataUrl, embedLink, extractYoutubeId } from '../helpers';
 import {
   Container, Typography, CardContent, CardActions, Card, CardMedia, Input,
   FormControl, FormControlLabel, Radio, FormLabel, RadioGroup, TextField, InputAdornment,
@@ -15,7 +15,6 @@ import InsertPhotoIcon from '@mui/icons-material/InsertPhoto';
 import SaveIcon from '@mui/icons-material/Save';
 import DoneIcon from '@mui/icons-material/Done';
 import FileDownloadDoneIcon from '@mui/icons-material/FileDownloadDone';
-
 import axios from '../axios';
 import AnswerCard from '../components/AnswerCard';
 import AddBoxIcon from '@mui/icons-material/AddBox';
@@ -192,12 +191,13 @@ export default function EditQuestionPage () {
   }
 
   const createCard = (question) => {
+    const videoId = extractYoutubeId(question.url);
     return (<Card
       sx={{ maxWidth: '1200px', display: 'flex', flexDirection: 'column', background: 'linear-gradient(147deg, #c3cbdc 0%, #edf1f4 74%)' }}
     >
       <CardMedia
-        component="img"
-        image={question.url || defaultQuestionThumbnail}
+        component={videoId ? 'iframe' : 'img'}
+        src={videoId ? embedLink(videoId) : (question.url || defaultQuestionThumbnail)}
         alt="Quiz Thumbnail"
       />
       <CardContent sx={{ flexGrow: 1 }}>
