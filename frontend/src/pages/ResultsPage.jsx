@@ -1,14 +1,10 @@
 import React from 'react';
-import { Container, Box, Typography } from '@mui/material';
-import TitleButton from '../components/TitleButton';
-import Loading from '../layouts/Loading';
+import { Container } from '@mui/material';
 import axios from '../axios';
 import { Context, useContext } from '../authContext';
-import WhiteBox from '../components/WhiteBox';
-import PrimaryButton from '../components/PrimaryButton';
-import GradientButton from '../components/GradientButton';
 import { useParams } from 'react-router-dom';
-// import QuizAdvance from '../components/AdminResult';
+import QuizAdvance from '../components/QuizAdvance';
+import AdminResult from '../components/AdminResult';
 
 export default function ResultsPage () {
   const { authToken } = useContext(Context);
@@ -21,7 +17,7 @@ export default function ResultsPage () {
 
   // Make an API call to /admin/session/{sessionid}/status to determine everything about this session.
   // If it's active, then show advance/stop
-
+  console.log(loading);
   const handleStop = () => {
     axios.post(`/admin/quiz/${params.quizId}/end`, {}, { headers: { Authorization: `Bearer ${authToken}` } })
       .then(data => {
@@ -70,33 +66,17 @@ export default function ResultsPage () {
   return (
     <>
       <main>
-        <TitleButton title="Game Management"/>
-        <Container maxWidth="lg">
-          <WhiteBox sx={{ height: '500px' }}>
-            { loading && !quizEnd
-              ? <Loading/>
-              : <Box sx={{ display: 'flex', flexDirection: 'column', mt: 5 }}>
-                  <Typography variant='h2' sx={{ fontWeight: 'bold', color: 'rgb(248,130,135)' }}>{quizName}</Typography>
-                  <Typography variant='h6'>{currPos === -1 ? 'The game hasn\'t started yet.' : `The current position is: ${currPos}` }</Typography>
-                  <Box sx={{ display: 'flex', mt: 10 }}>
-                    <PrimaryButton onClick={ handleStop }>
-                      Stop Session
-                    </PrimaryButton>
-                    <GradientButton onClick={ handleAdvance }>
-                      Advance Question
-                    </GradientButton>
-                  </Box>
-              </Box> }
-          </WhiteBox>
+        <Container maxWidth="lg" sx={{ mt: 10 }}>
+          {quizEnd
+            ? <AdminResult></AdminResult>
+            : <QuizAdvance
+            quizName={quizName}
+            currPos={currPos}
+            handleAdvance={handleAdvance}
+            handleStop={handleStop}
+          ></QuizAdvance>}
         </Container>
       </main>
     </>
   )
 }
-
-// <QuizAdvance
-//   quizName={quizName}
-//   currPos={currPos}
-//   handleAdvance={handleAdvance}
-//   handleStop={handleStop}
-// ></QuizAdvance>
