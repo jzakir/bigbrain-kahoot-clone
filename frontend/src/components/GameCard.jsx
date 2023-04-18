@@ -19,24 +19,24 @@ export default function GameCard (props) {
   const quiz = props.quiz;
   const { authToken } = useContext(Context);
 
-  const [activeSession, setActiveSession] = React.useState(false);
+  const [activeSession, setActiveSession] = React.useState('');
 
   const checkActiveSession = (quizId) => {
-    axios.get('/admin/quiz', { headers: { Authorization: `Bearer ${authToken}` } })
+    axios.get(`/admin/quiz/${quizId}`, { headers: { Authorization: `Bearer ${authToken}` } })
       .then(data => {
-        const quizArr = data.data.quizzes;
-        for (const quiz of quizArr) {
-          if (quiz.id === quizId) {
-            if (quiz.active) {
-              setActiveSession(true);
-            }
-          }
+        if (data.data.active) {
+          setActiveSession(data.data.active);
         }
       })
       .catch(err => console.log(err));
   }
 
   React.useEffect(() => checkActiveSession(quiz.id), [props.popUpState]);
+
+  const handleStop = () => {
+    props.onStop(quiz.id, activeSession);
+    setActiveSession('');
+  }
 
   return (<Grid item xs={12} sm={6} md={4}>
     <Card
@@ -61,7 +61,7 @@ export default function GameCard (props) {
         </Typography>
       </CardContent>
       <CardActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <PrimaryButton onClick={ props.onStart }>
+        <PrimaryButton onClick={ activeSession ? handleStop : props.onStart }>
           {activeSession ? 'Stop Session' : 'Start Session'}
         </PrimaryButton>
         <Box>
