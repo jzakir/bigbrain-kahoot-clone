@@ -1,6 +1,7 @@
 import React from 'react';
 import WhiteBox from '../components/WhiteBox';
 import PlayGameQuestion from '../components/PlayGameQuestion';
+import { useParams } from 'react-router-dom';
 
 const question = {
   id: 0,
@@ -28,9 +29,11 @@ const question = {
 }
 
 export default function PlayGamePage () {
+  const params = useParams();
   return (
     <>
       <WhiteBox>
+        <h1>{`Session ID: ${params.sessionId}, PlayerId: ${params.playerId}`}</h1>
         <PlayGameQuestion question={question}/>
       </WhiteBox>
     </>
