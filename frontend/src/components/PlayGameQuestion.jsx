@@ -3,14 +3,25 @@ import { Typography, CardContent, CardActions, Card, CardMedia, Container, Grid 
 import GradientButton from './GradientButton';
 import { defaultQuestionThumbnail, embedLink, extractYoutubeId } from '../helpers';
 import PlayAnswerButton from './PlayAnswerButton';
+import { useParams } from 'react-router-dom';
+import axios from '../axios';
 
 export default function PlayGameQuestion (props) {
   const question = props.question;
   const videoId = extractYoutubeId(question.url);
+  const params = useParams();
 
-  const [selectedAnswerIds, setSelectedAnswerIds] = React.useState([0, 3]);
+  const [selectedAnswerIds, setSelectedAnswerIds] = React.useState([]);
 
-  console.log(selectedAnswerIds);
+  const submitAnswer = () => {
+    axios.put(`/play/${params.playerId}/answer`, {
+      answerIds: selectedAnswerIds
+    })
+      .then(() => {
+        alert('Submitted!')
+      })
+      .catch(err => console.error(err));
+  }
 
   const handleAnswerChange = (answerId) => {
     if (selectedAnswerIds.includes(answerId)) {
@@ -48,7 +59,7 @@ export default function PlayGameQuestion (props) {
 
     </CardContent>
     <CardActions sx={{ alignSelf: 'flex-end' }}>
-      <GradientButton sx={{ height: '50%', alignSelf: 'center' }}>Submit Answer!</GradientButton>
+      <GradientButton id="submit-button" sx={{ height: '50%', alignSelf: 'center' }} onClick={submitAnswer}>Submit Answer!</GradientButton>
     </CardActions>
   </Card>);
 }

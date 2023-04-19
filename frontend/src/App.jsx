@@ -14,6 +14,7 @@ import NavBar from './components/NavBar';
 import ResultsPage from './pages/ResultsPage';
 import PlayGameHome from './pages/PlayGameHome';
 import PlayGamePage from './pages/PlayGamePage';
+import PlayResultsPage from './pages/PlayResultsPage';
 
 document.title = 'BigBrain!';
 
@@ -56,7 +57,10 @@ function App () {
            <Route path="play/join" element={<GradientLayout/>}>
             <Route index element={<PlayGameHome/>}/>
             <Route path=":sessionId">
-              <Route path=":playerId" element={<PlayGamePage/>}/>
+              <Route path=":playerId">
+                <Route index element={<PlayGamePage/>}/>
+                <Route path="results" element={<PlayResultsPage/>}/>
+              </Route>
             </Route>
            </Route>
         </Routes>
