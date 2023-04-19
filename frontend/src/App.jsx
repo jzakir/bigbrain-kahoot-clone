@@ -55,7 +55,9 @@ function App () {
           </Route>
            <Route path="play/join" element={<GradientLayout/>}>
             <Route index element={<PlayGameHome/>}/>
-            <Route path=":sessionId" element={<PlayGamePage/>}/>
+            <Route path=":sessionId">
+              <Route path=":playerId" element={<PlayGamePage/>}/>
+            </Route>
            </Route>
         </Routes>
       </BrowserRouter>

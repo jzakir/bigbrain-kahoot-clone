@@ -24,7 +24,12 @@ export default function DashBoard () {
   const [currSession, setCurrSession] = React.useState('');
   const [currStopSession, setCurrStopSession] = React.useState('');
   const [currQuizId, setCurrQuizId] = React.useState('');
-  const resultURL = 'http://localhost:3000/play/join';
+  const resultURL = new URL('http://localhost:3000/play/join');
+
+  const setUrlSearchParams = (currSession) => {
+    resultURL.searchParams.append('sessionId', currSession);
+    return resultURL;
+  }
 
   const fetchQuizzes = () => {
     setLoading(true);
@@ -159,7 +164,7 @@ export default function DashBoard () {
               </Box>
             </Box>
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
-            <CopyToClipboard text={resultURL}
+            <CopyToClipboard text={setUrlSearchParams(currSession)}
                onCopy={() => alert('Copied!')}>
               <PrimaryButton sx={{ mt: 3 }}>
                 Copy Link
