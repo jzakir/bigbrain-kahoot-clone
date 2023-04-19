@@ -5,6 +5,7 @@ import Loading from '../layouts/Loading';
 import axios from '../axios';
 import GradientButton from '../components/GradientButton';
 import PlayResult from '../components/PlayResult';
+import { Typography } from '@mui/material';
 
 export default function PlayResultsPage () {
   const params = useParams();
@@ -17,7 +18,6 @@ export default function PlayResultsPage () {
     axios.get(`/play/${params.playerId}/results`)
       .then(data => {
         setResults(data.data.map((val, index) => `Question ${index + 1}: ${val.correct ? 'Correct' : 'Incorrect'}`));
-        console.log(data.data);
       })
       .then(() => setLoading(false))
       .catch(err => console.err(err));
@@ -28,8 +28,9 @@ export default function PlayResultsPage () {
   return (
     <>
       <WhiteBox>
+        <Typography sx={{ mb: 4, fontWeight: 'bold' }} variant='h6'>Your Results:</Typography>
         {loading ? <Loading/> : <PlayResult results={results}/>}
-        <GradientButton onClick={() => navigate('/play/join')}>Play Again</GradientButton>
+        <GradientButton sx={{ mt: 4 }} onClick={() => navigate('/play/join')}>Play Again</GradientButton>
       </WhiteBox>
     </>
   )

@@ -2,8 +2,8 @@ import React from 'react';
 import WhiteBox from '../components/WhiteBox';
 import PlayGameQuestion from '../components/PlayGameQuestion';
 import { useNavigate, useParams } from 'react-router-dom';
-import Loading from '../layouts/Loading';
 import axios from '../axios';
+import WaitGameStart from '../components/WaitGameStart';
 
 // const question = {
 //   id: 0,
@@ -75,7 +75,7 @@ export default function PlayGamePage () {
   return (
     <>
       <WhiteBox>
-        {loading ? <Loading/> : <PlayGameQuestion question={question}/>}
+        {loading ? <WaitGameStart/> : <PlayGameQuestion question={question}/>}
       </WhiteBox>
     </>
   )
