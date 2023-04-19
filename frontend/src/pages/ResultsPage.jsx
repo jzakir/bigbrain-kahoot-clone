@@ -10,12 +10,10 @@ export default function ResultsPage () {
   const { authToken } = useContext(Context);
   const params = useParams();
 
-  const [loading, setLoading] = React.useState(false);
   const [quizName, setQuizName] = React.useState('');
   const [quizEnd, setQuizEnd] = React.useState(false);
   const [currPos, setCurrPos] = React.useState(-1);
-
-  console.log(loading);
+  const [questions, setQuestions] = React.useState([]);
   const handleStop = () => {
     axios.post(`/admin/quiz/${params.quizId}/end`, {}, { headers: { Authorization: `Bearer ${authToken}` } })
       .then(data => {
@@ -33,21 +31,18 @@ export default function ResultsPage () {
   }
 
   const fetchQuizName = () => {
-    setLoading(true);
     axios.get(`/admin/quiz/${params.quizId}`, { headers: { Authorization: `Bearer ${authToken}` } })
       .then(data => {
         setQuizName(data.data.name);
       })
       .catch(err => console.log(err));
-    setLoading(false);
   }
-
-  console.log(quizEnd);
 
   const checkQuizStatus = () => {
     axios.get(`/admin/session/${params.sessionId}/status`, { headers: { Authorization: `Bearer ${authToken}` } })
       .then(data => {
         const result = data.data.results;
+        setQuestions(result.questions);
         setCurrPos(result.position);
         if (!result.active) {
           setQuizEnd(true);
@@ -70,6 +65,7 @@ export default function ResultsPage () {
             : <QuizAdvance
             quizName={quizName}
             currPos={currPos}
+            questions={questions}
             handleAdvance={handleAdvance}
             handleStop={handleStop}
           ></QuizAdvance>}
