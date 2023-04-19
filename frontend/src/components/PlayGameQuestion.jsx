@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, CardContent, CardActions, Card, CardMedia, Container } from '@mui/material';
+import { Typography, CardContent, CardActions, Card, CardMedia, Container, Grid } from '@mui/material';
 import GradientButton from './GradientButton';
 import { defaultQuestionThumbnail, embedLink, extractYoutubeId } from '../helpers';
 import PlayAnswerButton from './PlayAnswerButton';
@@ -35,14 +35,17 @@ export default function PlayGameQuestion (props) {
        {question.questionString}
       </Typography>
       <Typography color="grey" fontSize={15} variant="body1">{question.type === 'multiple' ? 'Select all that are correct' : 'Select the correct answer'}</Typography>
-      <Container maxWidth="md" sx={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center', flexWrap: 'wrap' }}>
+      <Container maxWidth="lg" sx={{ pb: 3 }}>
+        <Grid sx={{ display: 'flex', justifyContent: 'space-between' }} container spacing={1}>
           {question.selections.map(a => <PlayAnswerButton
-            answer={a}
-            key={a.answerId}
-            selected={selectedAnswerIds.includes(a.answerId)}
-            handleAnswerChange={handleAnswerChange}
-          />)}
+              answer={a}
+              key={a.answerId}
+              selected={selectedAnswerIds.includes(a.answerId)}
+              handleAnswerChange={handleAnswerChange}
+            />)}
+        </Grid>
       </Container>
+
     </CardContent>
     <CardActions sx={{ alignSelf: 'flex-end' }}>
       <GradientButton sx={{ height: '50%', alignSelf: 'center' }}>Submit Answer!</GradientButton>
